@@ -1,0 +1,31 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fileshare"
+dynamic = ["version"]
+dependencies = [
+  "alembic",
+  "fastapi",
+  "httpx",
+  "passlib[bcrypt]",
+  "psycopg[binary]",
+  "pydantic",
+  "pydantic-settings",
+  "python-multipart",
+  "python-jose[cryptography]",
+  "pytest",
+  "redis",
+  "sqlalchemy",
+  "tenacity",
+]
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = [
+  "app/tests",
+]
+filterwarnings =[
+  "ignore::DeprecationWarning:pydantic.*:",
+]

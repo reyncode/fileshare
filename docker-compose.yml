@@ -1,0 +1,41 @@
+name: fileshare
+
+services:
+  database:
+    image: postgres:alpine
+    restart: no
+    volumes:
+      - app-db-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+
+  backend:
+    restart: on-failure:3
+    depends_on:
+      - database
+    env_file:
+      - .env
+    environment:
+      - DOMAIN=${DOMAIN}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - SECRET_KEY=${SECRET_KEY?Variable not set}
+      - USERS_OPEN_REGISTRATION=${USERS_OPEN_REGISTRATION}
+      - POSTGRES_SERVER=database
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not sat}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+    build:
+      context: ./backend
+    ports:
+      - "8000:80"
+
+volumes:
+  app-db-data:
