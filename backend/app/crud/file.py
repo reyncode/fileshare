@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.cache.file import file_cache
+from app.cache.core import redis_db as redis
 from app.models.file import File
 from app.schemas.file import FileCreate, FileUpdate
 from app.schemas.security import Message
@@ -29,7 +29,7 @@ class CRUDFiles():
         session.commit()
         session.refresh(new_file)
 
-        file_cache.write_file_to_cache(new_file.id, new_file.owner_id, jsonable_encoder(new_file))
+        redis.write_file_to_cache(new_file.id, new_file.owner_id, jsonable_encoder(new_file))
 
         return new_file
 
@@ -39,7 +39,7 @@ class CRUDFiles():
         """
         Read the database file by it's id.
         """
-        file_obj = file_cache.read_file_by_id_from_cache(id)
+        file_obj = redis.read_file_by_id_from_cache(id)
         if file_obj:
             return File(**file_obj)
 
@@ -48,7 +48,7 @@ class CRUDFiles():
         ).first()
 
         if file:
-            file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+            redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
 
         return file
 
@@ -78,10 +78,10 @@ class CRUDFiles():
         Read all the database file's that have an owner_id of user_id.
         """
         database_file_count = self.read_file_count_by_user_id(session=session, user_id=user_id)
-        cached_file_count = file_cache.read_file_count_by_owner_id_from_cache(user_id)
+        cached_file_count = redis.read_file_count_by_owner_id_from_cache(user_id)
 
         if database_file_count == cached_file_count:
-            file_objs = file_cache.read_files_by_owner_id_from_cache(user_id)
+            file_objs = redis.read_files_by_owner_id_from_cache(user_id)
             if file_objs:
                 return [File(**file) for file in file_objs]
 
@@ -90,7 +90,7 @@ class CRUDFiles():
         ).all()
 
         for file in files:
-            file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+            redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
 
         return files # type: ignore
 
@@ -113,7 +113,7 @@ class CRUDFiles():
         session.commit()
         session.refresh(file)
 
-        file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file)) # type: ignore
+        redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file)) # type: ignore
     
         return file
 
@@ -128,7 +128,7 @@ class CRUDFiles():
         session.delete(file)
         session.commit()
 
-        file_cache.delete_file_from_cache(file_id)
+        redis.delete_file_from_cache(file_id)
 
         return Message(message="File deleted successfully")
 

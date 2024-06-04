@@ -1,8 +1,7 @@
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from app.cache.core import client
-from app.cache.file import file_cache
+from app.cache.core import redis_db as redis
 from app.tests.utils.file import create_random_file
 from app.tests.utils.user import create_random_user
 
@@ -11,19 +10,19 @@ def test_write_file_to_cache(session: Session) -> None:
 
     assert file
 
-    file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+    redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
 
-    assert client.exists(f"file:{file.id}") == 1
-    assert client.exists(f"owner_id:{file.owner_id}") == 1
+    assert redis.exists(f"file:{file.id}") == 1
+    assert redis.exists(f"owner_id:{file.owner_id}") == 1
 
 def test_read_file_by_id_from_cache(session: Session) -> None:
     file = create_random_file(session=session)
 
     assert file
 
-    file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+    redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
 
-    file_obj = file_cache.read_file_by_id_from_cache(file.id)
+    file_obj = redis.read_file_by_id_from_cache(file.id)
 
     assert file_obj
     assert file_obj["id"] == file.id
@@ -41,10 +40,10 @@ def test_read_files_by_owner_id_from_cache(session: Session) -> None:
     assert file_1
     assert file_2
 
-    file_cache.write_file_to_cache(file_1.id, file_1.owner_id, jsonable_encoder(file_1))
-    file_cache.write_file_to_cache(file_2.id, file_2.owner_id, jsonable_encoder(file_2))
+    redis.write_file_to_cache(file_1.id, file_1.owner_id, jsonable_encoder(file_1))
+    redis.write_file_to_cache(file_2.id, file_2.owner_id, jsonable_encoder(file_2))
 
-    file_objs = file_cache.read_files_by_owner_id_from_cache(user.id)
+    file_objs = redis.read_files_by_owner_id_from_cache(user.id)
 
     assert len(file_objs) == 2
 
@@ -62,10 +61,10 @@ def test_read_file_count_by_owner_id_from_cache(session: Session) -> None:
     assert file_1
     assert file_2
 
-    file_cache.write_file_to_cache(file_1.id, file_1.owner_id, jsonable_encoder(file_1))
-    file_cache.write_file_to_cache(file_2.id, file_2.owner_id, jsonable_encoder(file_2))
+    redis.write_file_to_cache(file_1.id, file_1.owner_id, jsonable_encoder(file_1))
+    redis.write_file_to_cache(file_2.id, file_2.owner_id, jsonable_encoder(file_2))
 
-    count = file_cache.read_file_count_by_owner_id_from_cache(user.id)
+    count = redis.read_file_count_by_owner_id_from_cache(user.id)
 
     assert count == 2
 
@@ -74,13 +73,13 @@ def test_delete_file_from_cache(session: Session) -> None:
 
     assert file
 
-    file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+    redis.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
 
-    file_cache.delete_file_from_cache(file.id)
+    redis.delete_file_from_cache(file.id)
 
-    assert client.exists(f"file:{file.id}") == 0
-    assert client.exists(f"owner_id:{file.owner_id}") == 0
+    assert redis.exists(f"file:{file.id}") == 0
+    assert redis.exists(f"owner_id:{file.owner_id}") == 0
 
-    file_obj = file_cache.read_file_by_id_from_cache(file.id)
+    file_obj = redis.read_file_by_id_from_cache(file.id)
 
     assert not file_obj

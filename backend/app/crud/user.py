@@ -1,9 +1,8 @@
-import json
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.cache.user import user_cache
+from app.cache.core import redis_db as redis
 from app.core.security import get_password_hash, verify_password
 from app.crud.file import files
 from app.models.file import File
@@ -31,7 +30,7 @@ class CRUDUsers():
         session.commit()
         session.refresh(new_user)
 
-        user_cache.write_user_to_cache(new_user.id, new_user.email, jsonable_encoder(new_user))
+        redis.write_user_to_cache(new_user.id, new_user.email, jsonable_encoder(new_user))
 
         return new_user
 
@@ -41,7 +40,7 @@ class CRUDUsers():
         """
         Read the database user by their id.
         """
-        user_obj = user_cache.read_user_by_id_from_cache(id)
+        user_obj = redis.read_user_by_id_from_cache(id)
         if user_obj:
             return User(**user_obj)
 
@@ -50,7 +49,7 @@ class CRUDUsers():
         ).first()
 
         if user:
-            user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
+            redis.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
 
         return user
 
@@ -60,7 +59,7 @@ class CRUDUsers():
         """
         Read the database user with the email that matches email.
         """
-        user_obj = user_cache.read_user_by_email_from_cache(email)
+        user_obj = redis.read_user_by_email_from_cache(email)
         if user_obj:
             return User(**user_obj)
 
@@ -69,7 +68,7 @@ class CRUDUsers():
         ).first()
 
         if user:
-            user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
+            redis.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
 
         return user
 
@@ -93,9 +92,9 @@ class CRUDUsers():
         session.refresh(user)
 
         if "email" in obj_data:
-            user_cache.delete_user_from_cache(user_id)
+            redis.delete_user_from_cache(user_id)
 
-        user_cache.write_user_to_cache(user_id, user.email, jsonable_encoder(user)) # type: ignore
+        redis.write_user_to_cache(user_id, user.email, jsonable_encoder(user)) # type: ignore
 
         return user
 
@@ -115,7 +114,7 @@ class CRUDUsers():
         session.commit()
         session.refresh(user)
 
-        user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user)) # type: ignore
+        redis.write_user_to_cache(user.id, user.email, jsonable_encoder(user)) # type: ignore
     
         return Message(message="Password updated successfully")
 
@@ -137,7 +136,7 @@ class CRUDUsers():
         session.delete(user)
         session.commit()
 
-        user_cache.delete_user_from_cache(user.id) # type: ignore
+        redis.delete_user_from_cache(user.id) # type: ignore
 
         return Message(message="User deleted successfully")
 
