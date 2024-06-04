@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from app.api.dependencies import CurrentUser, SessionDep
 from app.core.config import settings
 from app.core.security import verify_password
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.schemas.security import Message
 from app.schemas.user import (
     UpdatePassword,
@@ -28,7 +28,7 @@ def register_user(session: SessionDep, user_in: UserCreate) -> Any:
             detail="Open user registration is forbidden on this server"
         )
 
-    user = users.read_user_by_email(session=session, email=user_in.email)
+    user = user_crud.read_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
@@ -36,7 +36,7 @@ def register_user(session: SessionDep, user_in: UserCreate) -> Any:
         )
 
     user_create = UserCreate.model_validate(user_in.model_dump(exclude_unset=True))
-    user = users.create_user(session=session, user_create=user_create)
+    user = user_crud.create_user(session=session, user_create=user_create)
 
     return user
 
@@ -55,14 +55,13 @@ def update_user_me(
     Update the current user.
     """
     if user_in.email:
-        if users.read_user_by_email(session=session, email=user_in.email):
+        if user_crud.read_user_by_email(session=session, email=user_in.email):
             raise HTTPException(
                 status_code=409,
                 detail="User with this email already exists"
             )
 
-
-    user = users.update_user(session=session, user_id=current_user.id, user_in=user_in)
+    user = user_crud.update_user(session=session, user_id=current_user.id, user_in=user_in)
 
     return to_pydantic(user, UserPublic)
 
@@ -85,7 +84,7 @@ def update_password_me(
             detail="New password cannot be the same as the current password"
         )
 
-    return users.update_user_password(session=session, user_id=current_user.id, password=body.new_password)
+    return user_crud.update_user_password(session=session, user_id=current_user.id, password=body.new_password)
 
 @router.delete("/me", response_model=Message)
 def delete_user_me(
@@ -94,4 +93,4 @@ def delete_user_me(
     """
     Delete own user.
     """
-    return users.delete_user(session=session, user_id=current_user.id)
+    return user_crud.delete_user(session=session, user_id=current_user.id)

@@ -132,4 +132,4 @@ class CRUDFiles():
 
         return Message(message="File deleted successfully")
 
-files = CRUDFiles() # TODO: change to file_crud
+file_crud = CRUDFiles()

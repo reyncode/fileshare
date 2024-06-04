@@ -4,7 +4,7 @@ from sqlalchemy.pool import StaticPool
 
 import app.database.base as model_base
 
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.models.user import User
 from app.schemas.user import UserCreate
 from app.core.config import settings
@@ -30,5 +30,5 @@ def init_db(session: Session) -> None:
             email=settings.TEST_USER_EMAIL, 
             password=settings.TEST_USER_PASSWORD
         )
-        user = users.create_user(session=session, user_create=user_in)
+        user = user_crud.create_user(session=session, user_create=user_in)
 

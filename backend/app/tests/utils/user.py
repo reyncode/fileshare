@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.core.config import settings
 from app.models.user import User
 from app.schemas.user import UserCreate
@@ -24,6 +24,6 @@ def create_random_user(session: Session) -> User:
     email = random_email()
     password = random_lower_string(32)
     user_in = UserCreate(email=email, password=password)
-    user = users.create_user(session=session, user_create=user_in)
+    user = user_crud.create_user(session=session, user_create=user_in)
 
     return user

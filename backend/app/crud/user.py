@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.cache.core import redis_db as redis
 from app.core.security import get_password_hash, verify_password
-from app.crud.file import files
+from app.crud.file import file_crud
 from app.models.file import File
 from app.models.user import User
 from app.schemas.security import Message
@@ -131,7 +131,7 @@ class CRUDUsers():
         ).all()
 
         for id in file_ids:
-            files.delete_file(session=session, file_id=id)
+            file_crud.delete_file(session=session, file_id=id)
 
         session.delete(user)
         session.commit()
@@ -156,4 +156,4 @@ class CRUDUsers():
 
         return user
 
-users = CRUDUsers() # TODO: rename to user_crud
+user_crud = CRUDUsers()

@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from app.crud.file import files
+from app.crud.file import file_crud
 from app.api.dependencies import CurrentUser, SessionDep
 from app.schemas.file import FileCreate, FileUpdate, FilePublic, FilesPublic
 from app.schemas.security import Message
@@ -19,7 +19,7 @@ def create_file(
     """
     # TODO: instead of 400, rename the path to _1 or something similar for duplicate file names. 
 
-    file = files.read_file_by_path(session=session, path=file_in.path, owner_id=current_user.id)
+    file = file_crud.read_file_by_path(session=session, path=file_in.path, owner_id=current_user.id)
 
     if file:
         raise HTTPException(
@@ -27,7 +27,7 @@ def create_file(
             detail="A file with the same name already exists"
         )
 
-    file = files.create_file(session=session, file_in=file_in, owner_id=current_user.id)
+    file = file_crud.create_file(session=session, file_in=file_in, owner_id=current_user.id)
 
     return to_pydantic(file, FilePublic)
 
@@ -36,7 +36,7 @@ def read_file(session: SessionDep, file_id: int) -> Any:
     """
     Get an file by id.
     """
-    file = files.read_file(session=session, id=file_id)
+    file = file_crud.read_file(session=session, id=file_id)
 
     if not file:
         raise HTTPException(
@@ -53,8 +53,8 @@ def read_files(
     """
     Get a list of files with the current_user's id.
     """
-    count = files.read_file_count_by_user_id(session=session, user_id=current_user.id)
-    all_files = files.read_all_files_by_user_id(session=session, user_id=current_user.id, skip=skip, limit=limit)
+    count = file_crud.read_file_count_by_user_id(session=session, user_id=current_user.id)
+    all_files = file_crud.read_all_files_by_user_id(session=session, user_id=current_user.id, skip=skip, limit=limit)
 
     result = [to_pydantic(file, FilePublic) for file in all_files]
 
@@ -67,7 +67,7 @@ def update_file(
     """
     Update a file by it's id.
     """
-    file = files.read_file(session=session, id=file_id)
+    file = file_crud.read_file(session=session, id=file_id)
     if not file:
         raise HTTPException(
             status_code=404,
@@ -80,7 +80,7 @@ def update_file(
             detail="User does not have permission to update this file"
         )
 
-    update_file = files.update_file(session=session, file_id=file.id, file_in=file_in)
+    update_file = file_crud.update_file(session=session, file_id=file.id, file_in=file_in)
 
     return to_pydantic(update_file, FilePublic)
 
@@ -91,7 +91,7 @@ def delete_file(
     """
     Delete a file by it's id.
     """
-    file = files.read_file(session=session, id=file_id)
+    file = file_crud.read_file(session=session, id=file_id)
     if not file:
         raise HTTPException(
             status_code=404,
@@ -104,4 +104,4 @@ def delete_file(
             detail="User does not have permission to delete this file"
         )
 
-    return files.delete_file(session=session, file_id=file_id)
+    return file_crud.delete_file(session=session, file_id=file_id)

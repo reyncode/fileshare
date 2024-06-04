@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.api.dependencies import SessionDep, CurrentUser
 from app.core import security
 from app.core.config import settings
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.schemas.security import Token
 from app.schemas.user import UserPublic
 
@@ -20,7 +20,7 @@ def login_access_token(
     """
     Validate the user's credentials and create a token if successful.
     """
-    user = users.authenticate(
+    user = user_crud.authenticate(
         session=session, email=form_data.username, password=form_data.password
     )
 

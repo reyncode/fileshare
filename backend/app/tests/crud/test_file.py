@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 
-from app.crud.file import files
+from app.crud.file import file_crud
 from app.schemas.file import FileCreate, FileUpdate
 from app.tests.utils.user import create_random_user
 from app.tests.utils.utils import random_path
@@ -15,7 +15,7 @@ def test_create_file(session: Session) -> None:
     path = random_path()
 
     file_in = FileCreate(path=path)
-    file = files.create_file(session=session, file_in=file_in, owner_id=user.id)
+    file = file_crud.create_file(session=session, file_in=file_in, owner_id=user.id)
 
     assert file
     assert hasattr(file, "path")
@@ -33,8 +33,8 @@ def test_create_files_same_path_different_user(session: Session) -> None:
     assert user_1
     assert user_2
 
-    file_1 = files.create_file(session=session, file_in=file_in_1, owner_id=user_1.id)
-    file_2 = files.create_file(session=session, file_in=file_in_2, owner_id=user_2.id)
+    file_1 = file_crud.create_file(session=session, file_in=file_in_1, owner_id=user_1.id)
+    file_2 = file_crud.create_file(session=session, file_in=file_in_2, owner_id=user_2.id)
 
     assert file_1
     assert file_2
@@ -47,7 +47,7 @@ def test_read_file(session: Session) -> None:
 
     assert file
 
-    read_file = files.read_file(session=session, id=file.id)
+    read_file = file_crud.read_file(session=session, id=file.id)
 
     assert read_file
     assert read_file.path == file.path
@@ -58,7 +58,7 @@ def test_read_file_by_path(session: Session) -> None:
 
     assert file
 
-    read_file = files.read_file_by_path(session=session, path=file.path, owner_id=file.owner_id)
+    read_file = file_crud.read_file_by_path(session=session, path=file.path, owner_id=file.owner_id)
 
     assert read_file
     assert read_file.path == file.path
@@ -80,7 +80,7 @@ def test_read_all_files_by_user_id(session: Session) -> None:
         file_2.id : file_2.path,
     }
 
-    file_list = files.read_all_files_by_user_id(session=session, user_id=user.id)
+    file_list = file_crud.read_all_files_by_user_id(session=session, user_id=user.id)
 
     assert len(file_dict) == len(file_list)
     assert jsonable_encoder(file_list[0]) != jsonable_encoder(file_list[1])
@@ -98,7 +98,7 @@ def test_read_file_count_by_user_id(session: Session) -> None:
     assert file_1
     assert file_2
 
-    count = files.read_file_count_by_user_id(session=session, user_id=user.id)
+    count = file_crud.read_file_count_by_user_id(session=session, user_id=user.id)
 
     assert count == 2
 
@@ -110,7 +110,7 @@ def test_update_file(session: Session) -> None:
     new_path = random_path()
 
     updated_file_in = FileUpdate(path=new_path)
-    updated_file = files.update_file(session=session, file_id=file.id, file_in=updated_file_in)
+    updated_file = file_crud.update_file(session=session, file_id=file.id, file_in=updated_file_in)
 
     assert updated_file
     assert updated_file.path == new_path
@@ -124,7 +124,7 @@ def test_delete_file(session: Session) -> None:
 
     assert file
 
-    files.delete_file(session=session, file_id=file.id)
-    result = files.read_file_by_path(session=session, path=file.path, owner_id=user.id)
+    file_crud.delete_file(session=session, file_id=file.id)
+    result = file_crud.read_file_by_path(session=session, path=file.path, owner_id=user.id)
 
     assert result is None

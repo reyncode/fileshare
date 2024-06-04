@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.models.user import User
 from app.core.security import verify_password
 from app.schemas.user import UserCreate, UserUpdate
@@ -26,7 +26,7 @@ def test_register_user(client: TestClient, session: Session) -> None:
         created_user = r.json()
         assert created_user["email"] == username
 
-        user = users.read_user_by_email(session=session, email=username)
+        user = user_crud.read_user_by_email(session=session, email=username)
 
         assert user
         assert user.email == username
@@ -89,11 +89,11 @@ def test_update_user_me(
 
     # revert the email until we figure out the rollback
 
-    user = users.read_user_by_email(session=session, email=email)
+    user = user_crud.read_user_by_email(session=session, email=email)
 
     user_in = UserUpdate(email=settings.TEST_USER_EMAIL)
     if user:
-        user = users.update_user(session=session, user_id=user.id, user_in=user_in)
+        user = user_crud.update_user(session=session, user_id=user.id, user_in=user_in)
 
     session.refresh(user)
 
@@ -210,7 +210,7 @@ def test_delete_user_me(
     # revert the user delete until we figure out the rollback
 
     user_in = UserCreate(email=settings.TEST_USER_EMAIL, password=settings.TEST_USER_PASSWORD)
-    user = users.create_user(session=session, user_create=user_in)
+    user = user_crud.create_user(session=session, user_create=user_in)
 
     assert r.status_code == 200
     assert user

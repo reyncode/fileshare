@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.crud.file import files
+from app.crud.file import file_crud
 from app.tests.utils.file import create_random_file
 from app.tests.utils.utils import random_path
 
@@ -32,7 +32,7 @@ def test_create_file(
 
     user_id = r.json()["id"]
 
-    file = files.read_file_by_path(session=session, path=path, owner_id=user_id)
+    file = file_crud.read_file_by_path(session=session, path=path, owner_id=user_id)
 
     assert file
     assert file.path == path

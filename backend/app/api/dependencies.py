@@ -5,12 +5,11 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core import security
 from app.core.config import settings
-from app.crud.user import users
+from app.crud.user import user_crud
 from app.database.core import engine
 from app.models.user import User
 from app.schemas.security import TokenPayload
@@ -46,7 +45,7 @@ def get_current_user(
             detail="Could not validate credentials"
         )
 
-    user = users.read_user(session=session, id=token_data.sub) # type: ignore
+    user = user_crud.read_user(session=session, id=token_data.sub) # type: ignore
 
     if not user:
         raise HTTPException(
