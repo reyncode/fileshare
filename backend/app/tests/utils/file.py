@@ -11,9 +11,9 @@ def create_random_file(session: Session, owner_id: int | None = None) -> File:
     file_in = FileCreate(path=path)
 
     if owner_id:
-        file = files.create_file(session=session, file_create=file_in, owner_id=owner_id)
+        file = files.create_file(session=session, file_in=file_in, owner_id=owner_id)
     else:
         user = create_random_user(session)
-        file = files.create_file(session=session, file_create=file_in, owner_id=user.id)
+        file = files.create_file(session=session, file_in=file_in, owner_id=user.id)
 
     return file

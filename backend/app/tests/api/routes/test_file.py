@@ -25,7 +25,14 @@ def test_create_file(
     new_file = r.json()
     assert new_file["path"] == path
 
-    file = files.read_file_by_path(session=session, path=path)
+    r = client.get(
+        f"{settings.API_V1_STR}/users/me",
+        headers=user_token_headers,
+    )
+
+    user_id = r.json()["id"]
+
+    file = files.read_file_by_path(session=session, path=path, owner_id=user_id)
 
     assert file
     assert file.path == path
@@ -133,7 +140,7 @@ def test_update_file(
         json=data,
     ) 
 
-    assert r.status_code == 200
+    assert r.status_code == 200, f"{r.json()['detail']}"
     updated_file = r.json()
     assert updated_file["path"] == "/some/updated/path.txt"
     assert updated_file["owner_id"] == file.owner_id
@@ -189,7 +196,7 @@ def test_delete_file(
         headers=user_token_headers,
     )
 
-    assert r.status_code == 200
+    assert r.status_code == 200, f"{r.json()['detail']}"
     assert r.json()["message"] == "File deleted successfully"
 
 def test_delete_file_not_found_error(

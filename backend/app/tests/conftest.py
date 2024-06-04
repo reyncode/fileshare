@@ -8,6 +8,10 @@ from app.main import app
 from app.tests.core.database import SessionTesting, engine, init_db
 from app.api.dependencies import get_database_session
 from app.tests.utils.user import get_user_token_headers
+from app.cache.core import client as redis_client
+
+# TODO: this needs to be configured differently; we can't erase our entire cache when we want to run a test
+redis_client.flushall()
 
 @pytest.fixture(scope="session", autouse=True)
 def session() -> Generator[Session, None, None]:

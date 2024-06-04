@@ -17,9 +17,9 @@ def create_file(
     """
     Create a new file database object with name and path owned by the current user.
     """
-    # TODO: instead of 400, rename the path to _1 or something similar. 
-    # Also, two different users should be able to have a file with the same name.
-    file = files.read_file_by_path(session=session, path=file_in.path)
+    # TODO: instead of 400, rename the path to _1 or something similar for duplicate file names. 
+
+    file = files.read_file_by_path(session=session, path=file_in.path, owner_id=current_user.id)
 
     if file:
         raise HTTPException(
@@ -27,7 +27,7 @@ def create_file(
             detail="A file with the same name already exists"
         )
 
-    file = files.create_file(session=session, file_create=file_in, owner_id=current_user.id)
+    file = files.create_file(session=session, file_in=file_in, owner_id=current_user.id)
 
     return to_pydantic(file, FilePublic)
 
@@ -80,7 +80,7 @@ def update_file(
             detail="User does not have permission to update this file"
         )
 
-    update_file = files.update_file(session=session, db_file=file, file_in=file_in)
+    update_file = files.update_file(session=session, file_id=file.id, file_in=file_in)
 
     return to_pydantic(update_file, FilePublic)
 
@@ -104,4 +104,4 @@ def delete_file(
             detail="User does not have permission to delete this file"
         )
 
-    return files.delete_file(session=session, db_file=file)
+    return files.delete_file(session=session, file_id=file_id)

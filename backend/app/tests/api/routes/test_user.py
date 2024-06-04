@@ -92,7 +92,8 @@ def test_update_user_me(
     user = users.read_user_by_email(session=session, email=email)
 
     user_in = UserUpdate(email=settings.TEST_USER_EMAIL)
-    user = users.update_user(session=session, db_user=user, user_in=user_in)
+    if user:
+        user = users.update_user(session=session, user_id=user.id, user_in=user_in)
 
     session.refresh(user)
 
@@ -153,9 +154,7 @@ def test_update_password_me(
         json=data,
     )
 
-    session.refresh(user)
-
-    assert r.status_code == 200
+    assert r.status_code == 200, f"{r.json()['detail']}"
     assert verify_password(settings.TEST_USER_PASSWORD, user.hashed_password)
 
 def test_update_password_me_incorrect_password_error(

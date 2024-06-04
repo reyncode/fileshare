@@ -4,13 +4,14 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
+from app.cache.file import file_cache
 from app.models.file import File
 from app.schemas.file import FileCreate, FileUpdate
 from app.schemas.security import Message
 
 class CRUDFiles():
     def create_file(
-        self, *, session: Session, file_create: FileCreate, owner_id: int
+        self, *, session: Session, file_in: FileCreate, owner_id: int
     ) -> File:
         """
         Create a new database file.
@@ -18,7 +19,7 @@ class CRUDFiles():
         # TODO: logic to determine if this is a folder or file
 
         new_file = File(
-            path=file_create.path,
+            path=file_in.path,
             owner_id=owner_id,
             created_at=func.now(),
             updated_at=func.now(),
@@ -28,6 +29,8 @@ class CRUDFiles():
         session.commit()
         session.refresh(new_file)
 
+        file_cache.write_file_to_cache(new_file.id, new_file.owner_id, jsonable_encoder(new_file))
+
         return new_file
 
     def read_file(
@@ -36,29 +39,28 @@ class CRUDFiles():
         """
         Read the database file by it's id.
         """
-        return session.scalars(
+        file_obj = file_cache.read_file_by_id_from_cache(id)
+        if file_obj:
+            return File(**file_obj)
+
+        file = session.scalars(
             select(File).filter_by(id=id)
         ).first()
 
+        if file:
+            file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+
+        return file
+
     def read_file_by_path(
-        self, *, session: Session, path: str
+        self, *, session: Session, path: str, owner_id: int
     ) -> File | None:
         """
-        Read the database file by it's path.
+        Read the database file by it's path for the provided owner_id.
         """
         return session.scalars(
-            select(File).filter_by(path=path)
+            select(File).filter_by(path=path, owner_id=owner_id)
         ).first()
-
-    def read_all_files_by_user_id(
-        self, *, session: Session, user_id: int, skip: int = 0, limit: int = 25
-        ) -> List[File]:
-        """
-        Read all the database file's that have an owner_id of user_id.
-        """
-        return session.scalars(
-            select(File).filter_by(owner_id=user_id).offset(skip).limit(limit)
-        ).all() # type: ignore
 
     def read_file_count_by_user_id(
         self, *, session: Session, user_id: int
@@ -69,34 +71,65 @@ class CRUDFiles():
 
         return 0 if count == None else count
 
+    def read_all_files_by_user_id(
+        self, *, session: Session, user_id: int, skip: int = 0, limit: int = 25
+        ) -> List[File]:
+        """
+        Read all the database file's that have an owner_id of user_id.
+        """
+        database_file_count = self.read_file_count_by_user_id(session=session, user_id=user_id)
+        cached_file_count = file_cache.read_file_count_by_owner_id_from_cache(user_id)
+
+        if database_file_count == cached_file_count:
+            file_objs = file_cache.read_files_by_owner_id_from_cache(user_id)
+            if file_objs:
+                return [File(**file) for file in file_objs]
+
+        files = session.scalars(
+            select(File).filter_by(owner_id=user_id).offset(skip).limit(limit)
+        ).all()
+
+        for file in files:
+            file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file))
+
+        return files # type: ignore
+
     def update_file(
-        self, *, session: Session, db_file: File, file_in: FileUpdate
+        self, *, session: Session, file_id: int, file_in: FileUpdate
     ) -> File:
         """
         Update the database file with the details provided in file_in.
         """
-        obj_data = jsonable_encoder(db_file)
+        file = session.get(File, file_id)
+
+        obj_data = jsonable_encoder(file)
         update_data = file_in.model_dump(exclude_unset=True)
 
         for field in obj_data:
             if field in update_data:
-                setattr(db_file, field, update_data[field])
+                setattr(file, field, update_data[field])
 
-        session.add(db_file)
+        session.add(file)
         session.commit()
-        session.refresh(db_file)
+        session.refresh(file)
+
+        file_cache.write_file_to_cache(file.id, file.owner_id, jsonable_encoder(file)) # type: ignore
     
-        return db_file
+        return file
 
     def delete_file(
-        self, *, session: Session, db_file: File
+        self, *, session: Session, file_id: int
     ) -> Message:
         """
         Delete the database file.
         """
-        session.delete(db_file)
+        file = session.get(File, file_id)
+
+        session.delete(file)
         session.commit()
+
+        file_cache.delete_file_from_cache(file_id)
 
         return Message(message="File deleted successfully")
 
-files = CRUDFiles()
+files = CRUDFiles() # TODO: change to file_crud

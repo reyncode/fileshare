@@ -15,11 +15,33 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+  cache:
+    image: redis:alpine
+    restart: no
+    volumes:
+      - cache:/data
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    environment:
+      - REDIS_USER=${REDIS_USER?Variable not set}
+      - REDIS_PASSWORD=${REDIS_PASSWORD?Variable not set}
+      - REDIS_REPLICATION_MODE=master
+    command:
+      - "--save 20 1"
+      - "--requirepass ${REDIS_PASSWORD}"
+
+  redisinsight:
+    image: redislabs/redisinsight
+    ports:
+      - "5540:5540"
 
   backend:
     restart: on-failure:3
     depends_on:
       - database
+      - cache
     env_file:
       - .env
     environment:
@@ -32,6 +54,11 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER?Variable not sat}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - REDIS_SERVER=cache
+      - REDIS_USER=${REDIS_USER?Variable not set}
+      - REDIS_PASSWORD=${REDIS_PASSWORD?Variable not set}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
     build:
       context: ./backend
     ports:
@@ -39,3 +66,5 @@ services:
 
 volumes:
   app-db-data:
+  cache:
+    driver: local

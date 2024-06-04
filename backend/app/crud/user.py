@@ -1,8 +1,11 @@
+import json
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
+from app.cache.user import user_cache
 from app.core.security import get_password_hash, verify_password
+from app.crud.file import files
 from app.models.file import File
 from app.models.user import User
 from app.schemas.security import Message
@@ -28,6 +31,8 @@ class CRUDUsers():
         session.commit()
         session.refresh(new_user)
 
+        user_cache.write_user_to_cache(new_user.id, new_user.email, jsonable_encoder(new_user))
+
         return new_user
 
     def read_user(
@@ -36,9 +41,18 @@ class CRUDUsers():
         """
         Read the database user by their id.
         """
-        return session.scalars(
+        user_obj = user_cache.read_user_by_id_from_cache(id)
+        if user_obj:
+            return User(**user_obj)
+
+        user = session.scalars(
             select(User).filter_by(id=id)
         ).first()
+
+        if user:
+            user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
+
+        return user
 
     def read_user_by_email(
         self, *, session: Session, email: str
@@ -46,60 +60,84 @@ class CRUDUsers():
         """
         Read the database user with the email that matches email.
         """
-        return session.scalars(
+        user_obj = user_cache.read_user_by_email_from_cache(email)
+        if user_obj:
+            return User(**user_obj)
+
+        user = session.scalars(
             select(User).filter_by(email=email)
         ).first()
 
+        if user:
+            user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user))
+
+        return user
+
     def update_user(
-        self, *, session: Session, db_user: User, user_in: UserUpdate
+        self, *, session: Session, user_id: int, user_in: UserUpdate
     ) -> User:
         """
         Update the database user with the details provided in user_in.
         """
-        obj_data = jsonable_encoder(db_user)
+        user = session.get(User, user_id)
+
+        obj_data = jsonable_encoder(user)
         update_data = user_in.model_dump(exclude_unset=True)
 
         for field in obj_data:
             if field in update_data:
-                setattr(db_user, field, update_data[field])
+                setattr(user, field, update_data[field])
 
-        session.add(db_user)
+        session.add(user)
         session.commit()
-        session.refresh(db_user)
+        session.refresh(user)
 
-        return db_user
+        if "email" in obj_data:
+            user_cache.delete_user_from_cache(user_id)
+
+        user_cache.write_user_to_cache(user_id, user.email, jsonable_encoder(user)) # type: ignore
+
+        return user
 
     def update_user_password(
-        self, *, session: Session, db_user: User, password: str
+        self, *, session: Session, user_id: int, password: str
     ) -> Message:
         """
         Update the database user's password with a hashed version of password.
         """
+        user = session.get(User, user_id)
+
         hashed_password = get_password_hash(password)
     
-        setattr(db_user, "hashed_password", hashed_password)
+        setattr(user, "hashed_password", hashed_password)
     
-        session.add(db_user)
+        session.add(user)
         session.commit()
+        session.refresh(user)
+
+        user_cache.write_user_to_cache(user.id, user.email, jsonable_encoder(user)) # type: ignore
     
         return Message(message="Password updated successfully")
 
     def delete_user(
-        self, *, session: Session, db_user: User
+        self, *, session: Session, user_id: int
     ) -> Message:
         """
         Delete the database user and all files with their id.
         """
-        delete_files = session.scalars(
-            select(File).filter_by(owner_id=db_user.id)
+        user = session.get(User, user_id)
+
+        file_ids = session.scalars(
+            select(File.id).filter_by(owner_id=user.id) # type: ignore
         ).all()
 
-        if delete_files:
-            for file in delete_files:
-                session.delete(file)
+        for id in file_ids:
+            files.delete_file(session=session, file_id=id)
 
-        session.delete(db_user)
+        session.delete(user)
         session.commit()
+
+        user_cache.delete_user_from_cache(user.id) # type: ignore
 
         return Message(message="User deleted successfully")
 
@@ -119,4 +157,4 @@ class CRUDUsers():
 
         return user
 
-users = CRUDUsers()
+users = CRUDUsers() # TODO: rename to user_crud

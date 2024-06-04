@@ -46,10 +46,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
-    op.create_index(op.f("ix_file_path"), "file", ["path"], unique=True)
-
 def downgrade() -> None:
     op.drop_table("file")
     op.drop_index(op.f("ix_user_email"), table_name="user")
-    op.drop_index(op.f("ix_file_path"), table_name="file")
     op.drop_table("user")

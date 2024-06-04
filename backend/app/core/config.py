@@ -1,12 +1,12 @@
+from datetime import timedelta
 import secrets
 from typing import Literal
 
 from pydantic import (
     PostgresDsn,
     computed_field,
-    RedisDsn,
 )
-from pydantic_core import MultiHostUrl, Url
+from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import find_dotenv
 
@@ -58,22 +58,11 @@ class Settings(BaseSettings):
     # Cache Config
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
-    REDIS_USER: str
-    REDIS_PASSWORD: str
-    REDIS_DB: str = "0"
+    REDIS_USER: str | None = ""
+    REDIS_PASSWORD: str | None = ""
+    REDIS_DB: int = 0
 
-    @computed_field
-    @property
-    def REDIS_CACHE_URI(self) -> RedisDsn:
-        return Url.build(
-            scheme="redis",
-            host=self.REDIS_SERVER,
-            port=self.REDIS_PORT,
-            username=self.REDIS_USER,
-            password=self.REDIS_PASSWORD,
-            path=self.REDIS_DB,
-        )
-
+    REDIS_CACHE_EXPIRY: timedelta = timedelta(seconds=3600)
 
 
 settings = Settings() # type: ignore

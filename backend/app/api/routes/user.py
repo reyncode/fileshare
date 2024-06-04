@@ -62,7 +62,7 @@ def update_user_me(
             )
 
 
-    user = users.update_user(session=session, db_user=current_user, user_in=user_in)
+    user = users.update_user(session=session, user_id=current_user.id, user_in=user_in)
 
     return to_pydantic(user, UserPublic)
 
@@ -85,7 +85,7 @@ def update_password_me(
             detail="New password cannot be the same as the current password"
         )
 
-    return users.update_user_password(session=session, db_user=current_user, password=body.new_password)
+    return users.update_user_password(session=session, user_id=current_user.id, password=body.new_password)
 
 @router.delete("/me", response_model=Message)
 def delete_user_me(
@@ -94,4 +94,4 @@ def delete_user_me(
     """
     Delete own user.
     """
-    return users.delete_user(session=session, db_user=current_user)
+    return users.delete_user(session=session, user_id=current_user.id)
