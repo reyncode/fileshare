@@ -59,7 +59,16 @@ services:
     build:
       context: ./backend
     ports:
-      - "8000:80"
+      - "5000"
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
 volumes:
   app-db-data:
