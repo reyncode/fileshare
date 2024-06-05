@@ -7,7 +7,7 @@ services:
     volumes:
       - app-db-data:/var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      - "5432"
     env_file:
       - .env
     environment:
@@ -15,6 +15,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+    networks:
+      - backend-network
 
   cache:
     image: redis:alpine
@@ -22,18 +24,22 @@ services:
     volumes:
       - cache:/data
     ports:
-      - "6379:6379"
+      - "6379"
     env_file:
       - .env
     command:
       - /bin/sh
       - -c
       - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    networks:
+      - backend-network
 
   redisinsight:
     image: redislabs/redisinsight
     ports:
       - "5540:5540"
+    networks:
+      - backend-network
 
   backend:
     restart: on-failure:3
@@ -60,6 +66,8 @@ services:
       context: ./backend
     ports:
       - "5000"
+    networks:
+      - backend-network
 
   nginx:
     image: nginx:latest
@@ -69,8 +77,14 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - backend-network
 
 volumes:
   app-db-data:
   cache:
     driver: local
+
+networks:
+  backend-network:
+    driver: bridge
