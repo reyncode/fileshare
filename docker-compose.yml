@@ -15,6 +15,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+
   cache:
     image: redis:alpine
     restart: no
@@ -24,13 +25,10 @@ services:
       - "6379:6379"
     env_file:
       - .env
-    environment:
-      - REDIS_USER=${REDIS_USER?Variable not set}
-      - REDIS_PASSWORD=${REDIS_PASSWORD?Variable not set}
-      - REDIS_REPLICATION_MODE=master
     command:
-      - "--save 20 1"
-      - "--requirepass ${REDIS_PASSWORD}"
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
 
   redisinsight:
     image: redislabs/redisinsight
@@ -55,7 +53,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not sat}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - REDIS_SERVER=cache
-      - REDIS_USER=${REDIS_USER?Variable not set}
       - REDIS_PASSWORD=${REDIS_PASSWORD?Variable not set}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DB=${REDIS_DB}

@@ -58,7 +58,6 @@ class Settings(BaseSettings):
     # Cache Config
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
-    REDIS_USER: str | None = ""
     REDIS_PASSWORD: str | None = ""
     REDIS_DB: int = 0
 
