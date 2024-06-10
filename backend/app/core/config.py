@@ -1,14 +1,23 @@
 from datetime import timedelta
 import secrets
-from typing import Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import (
+    AnyUrl,
+    BeforeValidator,
     PostgresDsn,
     computed_field,
 )
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import find_dotenv
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",")]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
 
 class Settings(BaseSettings):
     # Use environment variables from the global file
@@ -26,6 +35,10 @@ class Settings(BaseSettings):
 
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
 
     USERS_OPEN_REGISTRATION: bool = True
 

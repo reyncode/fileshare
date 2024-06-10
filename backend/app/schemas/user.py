@@ -14,6 +14,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+# TODO: update to UserUpdateMe
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
 

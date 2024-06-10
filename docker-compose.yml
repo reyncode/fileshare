@@ -16,7 +16,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
     networks:
-      - backend-network
+      - fileshare-public
 
   cache:
     image: redis:alpine
@@ -32,14 +32,43 @@ services:
       - -c
       - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
     networks:
-      - backend-network
+      - fileshare-public
 
   redisinsight:
     image: redislabs/redisinsight
     ports:
       - "5540:5540"
     networks:
-      - backend-network
+      - fileshare-public
+
+  dev-frontend:
+    image: node:20
+    working_dir: /app
+    restart: no
+    networks:
+      - fileshare-public
+    volumes:
+      - ./frontend:/app
+    environment:
+      - WATCHPACK_POLLING=true
+    ports:
+      - '5173:5173'
+    command: npm run dev -- --host
+
+  frontend:
+    restart: no
+    networks:
+      - fileshare-public
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://${DOMAIN?Variable not set}
+        - NODE_ENV=development
+    ports:
+      - "80:80"
+    depends_on:
+      - dev-frontend
+      - backend
 
   backend:
     restart: on-failure:3
@@ -52,6 +81,7 @@ services:
       - DOMAIN=${DOMAIN}
       - ENVIRONMENT=${ENVIRONMENT}
       - SECRET_KEY=${SECRET_KEY?Variable not set}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
       - USERS_OPEN_REGISTRATION=${USERS_OPEN_REGISTRATION}
       - POSTGRES_SERVER=database
       - POSTGRES_PORT=${POSTGRES_PORT}
@@ -65,20 +95,9 @@ services:
     build:
       context: ./backend
     ports:
-      - "5000"
+      - "8000"
     networks:
-      - backend-network
-
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - backend-network
+      - fileshare-public
 
 volumes:
   app-db-data:
@@ -86,5 +105,5 @@ volumes:
     driver: local
 
 networks:
-  backend-network:
+  fileshare-public:
     driver: bridge
