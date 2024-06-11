@@ -21,6 +21,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import { FilesService } from "../../client"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
+import { datetimeFormatter } from "../../utils"
 
 export const Route = createFileRoute("/_layout/files")({
   component: Files,
@@ -43,6 +44,7 @@ function FilesTableBody() {
               {file.path}
             </Flex>
           </Td>
+          <Td>{datetimeFormatter(file.updated_at)}</Td>
           <Td>
             <ActionsMenu type={"File"} value={file} />
           </Td>
@@ -59,6 +61,7 @@ function FilesTable() {
           <Tr>
             <Th>ID</Th>
             <Th>Path</Th>
+            <Th>Last Modified</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>

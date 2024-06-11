@@ -78,15 +78,7 @@ export type UserPublic = {
 };
 
 
-// TODO:
-// keep until we create the signup component
-export type UserRegister = {
-	email: string;
-	password: string;
-};
-
-
-export type UserUpdateMe = {
+export type UserUpdate = {
 	email?: string | null;
 };
 

@@ -18,7 +18,7 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 import {
   type ApiError,
   type UserPublic,
-  type UserUpdateMe,
+  type UserUpdate,
   UsersService,
 } from "../../client"
 import useAuth from "../../hooks/useAuth"
@@ -50,8 +50,8 @@ const UserInformation = () => {
   }
 
   const mutation = useMutation({
-    mutationFn: (data: UserUpdateMe) =>
-      UsersService.updateUserMe({ requestBody: data }),
+    mutationFn: (data: UserUpdate) =>
+      UsersService.updateUser({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "User updated successfully.", "success")
     },
@@ -66,7 +66,7 @@ const UserInformation = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
+  const onSubmit: SubmitHandler<UserUpdate> = async (data) => {
     mutation.mutate(data)
   }
 

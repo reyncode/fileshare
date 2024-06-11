@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserUpdateMe,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserUpdate,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -133,16 +133,12 @@ export type TDataCreateUser = {
                 requestBody: UserCreate
                 
             }
-export type TDataUpdateUserMe = {
-                requestBody: UserUpdateMe
+export type TDataUpdateUser = {
+                requestBody: UserUpdate
                 
             }
 export type TDataUpdatePasswordMe = {
                 requestBody: UpdatePassword
-                
-            }
-export type TDataRegisterUser = {
-                requestBody: UserRegister
                 
             }
 export type TDataReadUserById = {
@@ -168,7 +164,7 @@ requestBody,
 } = data;
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/api/v1/users/',
+			url: '/api/v1/users/register',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
@@ -196,8 +192,7 @@ requestBody,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-  // were using this endpoint in FastAPI
-	public static updateUserMe(data: TDataUpdateUserMe): CancelablePromise<UserPublic> {
+	public static updateUser(data: TDataUpdateUser): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -225,27 +220,6 @@ requestBody,
 		return __request(OpenAPI, {
 			method: 'PATCH',
 			url: '/api/v1/users/me/password',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Register User
-	 * Create new user without the need to be logged in.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static registerUser(data: TDataRegisterUser): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/users/signup',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {

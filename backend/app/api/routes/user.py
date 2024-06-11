@@ -17,7 +17,7 @@ from app.schemas.utils import to_pydantic
 
 router = APIRouter()
 
-@router.post("/signup", response_model=UserPublic)
+@router.post("/register", response_model=UserPublic)
 def register_user(session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create a new user with the provided credentials.

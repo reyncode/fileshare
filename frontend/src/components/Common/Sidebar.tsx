@@ -11,14 +11,17 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useColorMode,
 } from "@chakra-ui/react"
 import { FiLogOut, FiMenu } from "react-icons/fi"
 
-import Logo from "/assets/images/fastapi-logo.svg"
+import LogoDark from "/assets/images/fileshare-logo-dark.svg"
+import LogoLight from "/assets/images/fileshare-logo-light.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
+  const { colorMode } = useColorMode()
   const bgColor = useColorModeValue("ui.light", "ui.dark")
   const secBgColor = useColorModeValue("ui.secondary", "ui.darkSlate")
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -47,7 +50,11 @@ const Sidebar = () => {
           <DrawerBody py={8}>
             <Flex flexDir="column" justify="space-between">
               <Box>
-                <Image src={Logo} alt="logo" p={6} />
+                <Image 
+                  src={ colorMode === "light" ? LogoDark : LogoLight }
+                  alt="logo" 
+                  p={6} 
+                />
                 <SidebarItems onClose={onClose} />
                 <Flex
                   as="button"
@@ -83,7 +90,13 @@ const Sidebar = () => {
           borderRadius={12}
         >
           <Box>
-            <Image src={Logo} alt="Logo" w="180px" maxW="2xs" p={6} />
+            <Image 
+              src={ colorMode === "light" ? LogoDark : LogoLight }
+              alt="Logo" 
+              w="180px" 
+              maxW="2xs" 
+              p={6} 
+            />
             <SidebarItems />
               <Flex
                 as="button"

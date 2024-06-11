@@ -1,6 +1,5 @@
-import { Button, Flex, Icon, useDisclosure } from "@chakra-ui/react"
+import { Button, Flex, useDisclosure } from "@chakra-ui/react"
 import { 
-  FaPlus, 
   FaFolder,
   FaFolderPlus,
   FaFileAlt,

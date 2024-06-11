@@ -40,3 +40,18 @@ export const confirmPasswordRules = (
 
   return rules
 }
+
+export const datetimeFormatter = (str: string | null | undefined) => {
+  if ((str === null) || (str === undefined)) {
+    return "";
+  }
+
+  const date = new Date(str);
+  return date.toLocaleString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}

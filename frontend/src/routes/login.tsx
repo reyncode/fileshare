@@ -11,7 +11,11 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  Text,
+  Flex,
+  Spacer,
   useBoolean,
+  useColorMode,
 } from "@chakra-ui/react"
 import {
   Link as RouterLink,
@@ -20,7 +24,8 @@ import {
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import Logo from "/assets/images/fastapi-logo.svg"
+import LogoDark from "/assets/images/fileshare-logo-dark.svg"
+import LogoLight from "/assets/images/fileshare-logo-light.svg"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
@@ -37,6 +42,7 @@ export const Route = createFileRoute("/login")({
 })
 
 function Login() {
+  const { colorMode } = useColorMode()
   const [show, setShow] = useBoolean()
   const { loginMutation, error, resetError } = useAuth()
   const {
@@ -77,34 +83,58 @@ function Login() {
         centerContent
       >
         <Image
-          src={Logo}
-          alt="FastAPI logo"
+          src={ colorMode === "light" ? LogoDark : LogoLight }
+          alt="Fileshare logo"
           height="auto"
           maxW="2xs"
           alignSelf="center"
           mb={4}
         />
+        <Text fontSize="md" fontWeight="semibold">Email Address</Text>
         <FormControl id="username" isInvalid={!!errors.username || !!error}>
           <Input
             id="username"
             {...register("username", {
               pattern: emailPattern,
             })}
-            placeholder="Email"
             type="email"
             required
+            variant="filled"
           />
           {errors.username && (
             <FormErrorMessage>{errors.username.message}</FormErrorMessage>
           )}
         </FormControl>
-        <FormControl id="password" isInvalid={!!error}>
+
+        <Flex
+          alignItems="center"
+        >
+
+          <Text fontSize="md" fontWeight="semibold">Password</Text>
+          <Spacer />
+
+          <Link
+            as={RouterLink} 
+            to="/recover-password" 
+            color="blue.500"
+            fontWeight="semibold"
+          >
+            Forgot password?
+          </Link>
+
+        </Flex>
+
+        <FormControl
+          id="password" 
+          isInvalid={!!error}
+          mb={3}
+        >
           <InputGroup>
             <Input
               {...register("password")}
               type={show ? "text" : "password"}
-              placeholder="Password"
               required
+              variant="filled"
             />
             <InputRightElement
               color="ui.dim"
@@ -122,14 +152,26 @@ function Login() {
           </InputGroup>
           {error && <FormErrorMessage>{error}</FormErrorMessage>}
         </FormControl>
-        <Center>
-          <Link as={RouterLink} to="/recover-password" color="blue.500">
-            Forgot password?
-          </Link>
-        </Center>
-        <Button variant="primary" type="submit" isLoading={isSubmitting}>
+        <Button
+          variant="primary" 
+          type="submit" 
+          isLoading={isSubmitting}
+        >
           Log In
         </Button>
+        <Center
+          gap={1}
+        >
+          <Text fontSize="md" >Not yet registered?</Text>
+          <Link 
+            as={RouterLink} 
+            to="/register" 
+            color="blue.500"
+            fontWeight="semibold"
+          >
+            Create an account
+          </Link>
+        </Center>
       </Container>
     </>
   )
