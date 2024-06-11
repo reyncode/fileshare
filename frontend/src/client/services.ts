@@ -145,10 +145,6 @@ export type TDataReadUserById = {
                 userId: number
                 
             }
-export type TDataDeleteUser = {
-                userId: number
-                
-            }
 
 export class UsersService {
 
@@ -252,20 +248,14 @@ userId,
 
 	/**
 	 * Delete User
-	 * Delete a user.
+	 * Delete own account.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static deleteUser(data: TDataDeleteUser): CancelablePromise<Message> {
-		const {
-userId,
-} = data;
+	public static deleteUser(): CancelablePromise<Message> {
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/api/v1/users/{user_id}',
-			path: {
-				user_id: userId
-			},
+			url: '/api/v1/users/me',
 			errors: {
 				422: `Validation Error`,
 			},

@@ -1,11 +1,11 @@
 import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import { FiHome, FiSettings } from "react-icons/fi"
+import { /* FiHome, */FiSettings } from "react-icons/fi"
 import { MdOutlineCloud } from "react-icons/md";
 
 
 const items = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
+  // { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: MdOutlineCloud, title: "Storage", path: "/files" },
   { icon: FiSettings, title: "Settings", path: "/settings" },
 ]
