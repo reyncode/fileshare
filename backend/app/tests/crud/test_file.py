@@ -87,7 +87,7 @@ def test_read_all_files_by_user_id(session: Session) -> None:
     for file in file_list:
         assert file.id in file_dict
 
-def test_read_file_count_by_user_id(session: Session) -> None:
+def test_read_file_count_by_owner_id(session: Session) -> None:
     user = create_random_user(session=session)
 
     assert user
@@ -98,7 +98,7 @@ def test_read_file_count_by_user_id(session: Session) -> None:
     assert file_1
     assert file_2
 
-    count = file_crud.read_file_count_by_user_id(session=session, user_id=user.id)
+    count = file_crud.read_file_count_by_owner_id(session=session, user_id=user.id)
 
     assert count == 2
 
