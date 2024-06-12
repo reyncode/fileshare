@@ -34,7 +34,7 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     if (type === "File") {
       await FilesService.deleteFile({ id: id })
     } else if (type === "User") {
-      await UsersService.deleteUser({ userId: id })
+      await UsersService.deleteUser()
     } else {
       throw new Error(`Unexpected type: ${type}`)
     }
