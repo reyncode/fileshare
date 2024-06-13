@@ -18,11 +18,8 @@ export type FileCreate = {
 };
 
 
-// TODO: add created_at, updated_at
-// https://medium.com/@vladkens/automatic-parsing-of-date-strings-in-rest-protocol-with-typescript-cf43554bd157
 export type FilePublic = {
 	path: string;
-  is_folder?: boolean;
   created_at?: string | null;
   updated_at?: string | null;
 	id: number;

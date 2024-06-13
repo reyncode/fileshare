@@ -11,7 +11,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react"
-import { FaFolder, FaFileAlt } from "react-icons/fa"
+import { FaFileAlt } from "react-icons/fa"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
@@ -40,7 +40,7 @@ function FilesTableBody() {
           <Td>{file.id}</Td>
           <Td>
             <Flex alignItems="center" gap={6}>
-              {file.is_folder ? <FaFolder /> : <FaFileAlt />}
+              <FaFileAlt />
               {file.path}
             </Flex>
           </Td>

@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 class FileBase(BaseModel):
     path: str
-    is_folder: bool = False
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
