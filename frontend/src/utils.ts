@@ -55,3 +55,16 @@ export const datetimeFormatter = (str: string | null | undefined) => {
     minute: "2-digit"
   });
 }
+
+export const formatBytes = (bytes: number) => {
+  var marker = 1024;
+  var decimal = 2;
+  var kiloBytes = marker;
+  var megaBytes = marker * marker;
+  var gigaBytes = marker * marker * marker;
+
+  if(bytes < kiloBytes) return bytes + " Bytes";
+  else if(bytes < megaBytes) return(bytes / kiloBytes).toFixed(decimal) + " KB";
+  else if(bytes < gigaBytes) return(bytes / megaBytes).toFixed(decimal) + " MB";
+  else return(bytes / gigaBytes).toFixed(decimal) + " GB";
+}

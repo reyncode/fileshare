@@ -8,7 +8,7 @@ from app.schemas.file import FileCreate
 
 def create_random_file(session: Session, owner_id: int | None = None) -> File:
     name = random_name()
-    file_in = FileCreate(name=name)
+    file_in = FileCreate(name=name, size=548)
 
     if owner_id:
         file = file_crud.create_file(session=session, file_in=file_in, owner_id=owner_id)

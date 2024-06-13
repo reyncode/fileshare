@@ -5,14 +5,17 @@ from pydantic import BaseModel
 
 class FileBase(BaseModel):
     name: str
+    size: int
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
 class FileCreate(BaseModel):
     name: str
+    size: Optional[int] = 0
 
 class FileUpdate(BaseModel):
     name: Optional[str] = None
+    size: Optional[int] = 0
 
 class File(FileBase):
     id: int

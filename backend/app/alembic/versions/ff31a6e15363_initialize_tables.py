@@ -35,6 +35,7 @@ def upgrade() -> None:
         "file",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("size", sa.BigInteger(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("owner_id", sa.Integer(), nullable=False),

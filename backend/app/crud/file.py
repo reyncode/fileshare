@@ -16,10 +16,9 @@ class CRUDFiles():
         """
         Create a new database file.
         """
-        # TODO: logic to determine if this is a folder or file
-
         new_file = File(
             name=file_in.name,
+            size=file_in.size,
             owner_id=owner_id,
             created_at=func.now(),
             updated_at=func.now(),

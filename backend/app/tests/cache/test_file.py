@@ -28,6 +28,7 @@ def test_read_file_by_id_from_cache(session: Session) -> None:
     assert file_obj["id"] == file.id
     assert file_obj["owner_id"] == file.owner_id
     assert file_obj["name"] == file.name
+    assert file_obj["size"] == file.size
 
 def test_read_files_by_owner_id_from_cache(session: Session) -> None:
     user = create_random_user(session=session)

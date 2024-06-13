@@ -26,7 +26,8 @@ const Navbar = () => {
         // send file to storage
 
         const metadata: FileCreate = {
-          name: file.name
+          name: file.name,
+          size: file.size
         };
 
         // send metadata to our backend
