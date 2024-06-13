@@ -318,7 +318,7 @@ export type TDataDeleteFile = {
                 
             }
 
-export class FilesService {
+export class FilesMetadataService {
 
 	/**
 	 * Read Files

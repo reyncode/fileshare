@@ -19,7 +19,7 @@ import {
   type ApiError,
   type FilePublic,
   type FileUpdate,
-  FilesService,
+  FilesMetadataService,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
@@ -45,7 +45,7 @@ const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: FileUpdate) =>
-      FilesService.updateFile({ id: file.id, requestBody: data }),
+      FilesMetadataService.updateFile({ id: file.id, requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "File updated successfully.", "success")
       onClose()

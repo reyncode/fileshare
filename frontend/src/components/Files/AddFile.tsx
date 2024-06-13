@@ -15,7 +15,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type FileCreate, FilesService } from "../../client"
+import { type ApiError, type FileCreate, FilesMetadataService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface AddFileProps {
@@ -41,7 +41,7 @@ const AddFile = ({ isOpen, onClose }: AddFileProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: FileCreate) =>
-      FilesService.createFile({ requestBody: data }),
+      FilesMetadataService.createFile({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "File created successfully.", "success")
       reset()

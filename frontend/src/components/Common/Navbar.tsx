@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { useFilePicker } from 'use-file-picker';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type ApiError, type FileCreate, FilesService } from "../../client"
+import { type ApiError, type FileCreate, FilesMetadataService } from "../../client"
 
 const Navbar = () => {
   const queryClient = useQueryClient()
@@ -31,7 +31,7 @@ const Navbar = () => {
         };
 
         // send metadata to our backend
-        return FilesService.createFile({ requestBody: metadata });
+        return FilesMetadataService.createFile({ requestBody: metadata });
       };
 
       // process each file in parallel

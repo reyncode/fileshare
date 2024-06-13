@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
-import { FilesService, UsersService } from "../../client"
+import { FilesMetadataService, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface DeleteProps {
@@ -32,7 +32,7 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
 
   const deleteEntity = async (id: number) => {
     if (type === "File") {
-      await FilesService.deleteFile({ id: id })
+      await FilesMetadataService.deleteFile({ id: id })
     } else if (type === "User") {
       await UsersService.deleteUser()
     } else {
