@@ -35,7 +35,7 @@ const AddFile = ({ isOpen, onClose }: AddFileProps) => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      path: "",
+      name: "",
     },
   })
 
@@ -73,18 +73,18 @@ const AddFile = ({ isOpen, onClose }: AddFileProps) => {
           <ModalHeader>Add File</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!errors.path}>
-              <FormLabel htmlFor="path">Path</FormLabel>
+            <FormControl isRequired isInvalid={!!errors.name}>
+              <FormLabel htmlFor="name">Name</FormLabel>
               <Input
-                id="path"
-                {...register("path", {
-                  required: "Path is required.",
+                id="name"
+                {...register("name", {
+                  required: "Name is required.",
                 })}
-                placeholder="Path"
+                placeholder="Name"
                 type="text"
               />
-              {errors.path && (
-                <FormErrorMessage>{errors.path.message}</FormErrorMessage>
+              {errors.name && (
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
               )}
             </FormControl>
           </ModalBody>

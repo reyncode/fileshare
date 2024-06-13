@@ -15,11 +15,11 @@ def create_file(
     *, session: SessionDep, current_user: CurrentUser, file_in: FileCreate
 ) -> Any:
     """
-    Create a new file database object with name and path owned by the current user.
+    Create a new file database object with name owned by the current user.
     """
-    # TODO: instead of 400, rename the path to _1 or something similar for duplicate file names. 
+    # TODO: instead of 400, rename the file to _1 or something similar for duplicate file names. 
 
-    file = file_crud.read_file_by_path(session=session, path=file_in.path, owner_id=current_user.id)
+    file = file_crud.read_file_by_name(session=session, name=file_in.name, owner_id=current_user.id)
 
     if file:
         raise HTTPException(

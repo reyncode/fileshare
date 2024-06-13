@@ -41,7 +41,7 @@ function FilesTableBody() {
           <Td>
             <Flex alignItems="center" gap={6}>
               <FaFileAlt />
-              {file.path}
+              {file.name}
             </Flex>
           </Td>
           <Td>{datetimeFormatter(file.updated_at)}</Td>
@@ -60,7 +60,7 @@ function FilesTable() {
         <Thead>
           <Tr>
             <Th>ID</Th>
-            <Th>Path</Th>
+            <Th>Name</Th>
             <Th>Last Modified</Th>
             <Th>Actions</Th>
           </Tr>

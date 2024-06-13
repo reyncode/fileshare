@@ -4,16 +4,16 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.crud.file import file_crud
 from app.tests.utils.file import create_random_file
-from app.tests.utils.utils import random_path
+from app.tests.utils.utils import random_name
 
 def test_create_file(
     client: TestClient,
     session: Session,
     user_token_headers: dict[str, str],
 ) -> None:
-    path = random_path()
+    name = random_name()
 
-    data = {"path" : path}
+    data = {"name" : name}
 
     r = client.post(
         f"{settings.API_V1_STR}/files/",
@@ -23,7 +23,7 @@ def test_create_file(
 
     assert r.status_code == 200
     new_file = r.json()
-    assert new_file["path"] == path
+    assert new_file["name"] == name
 
     r = client.get(
         f"{settings.API_V1_STR}/users/me",
@@ -32,10 +32,10 @@ def test_create_file(
 
     user_id = r.json()["id"]
 
-    file = file_crud.read_file_by_path(session=session, path=path, owner_id=user_id)
+    file = file_crud.read_file_by_name(session=session, name=name, owner_id=user_id)
 
     assert file
-    assert file.path == path
+    assert file.name == name
     assert file.owner_id == new_file["owner_id"]
 
 def test_create_file_already_exists_error(
@@ -52,7 +52,7 @@ def test_create_file_already_exists_error(
 
     file = create_random_file(session=session, owner_id=user_id)
 
-    data = {"path": file.path}
+    data = {"name": file.name}
 
     r = client.post(
         f"{settings.API_V1_STR}/files/",
@@ -75,7 +75,7 @@ def test_read_file(
 
     assert r.status_code == 200
     new_file = r.json()
-    assert new_file["path"] == file.path
+    assert new_file["name"] == file.name
     assert new_file["owner_id"] == file.owner_id
 
 def test_read_file_not_found_error(
@@ -132,7 +132,7 @@ def test_update_file(
 
     file = create_random_file(session=session, owner_id=user_id)
 
-    data = {"path": "/some/updated/path.txt"}
+    data = {"name": "some-file.txt"}
 
     r = client.put(
         f"{settings.API_V1_STR}/files/{file.id}",
@@ -142,13 +142,13 @@ def test_update_file(
 
     assert r.status_code == 200, f"{r.json()['detail']}"
     updated_file = r.json()
-    assert updated_file["path"] == "/some/updated/path.txt"
+    assert updated_file["name"] == "some-file.txt"
     assert updated_file["owner_id"] == file.owner_id
 
 def test_update_file_not_found_error(
     client: TestClient, user_token_headers: dict[str, str]
 ) -> None:
-    data = {"path": "/some/unknown/path.txt"}
+    data = {"name": "missing.txt"}
 
     r = client.put(
         f"{settings.API_V1_STR}/files/666",
@@ -166,7 +166,7 @@ def test_update_file_not_enough_permissions_error(
     The current user is not the owner of this file.
     """
     file = create_random_file(session=session)
-    data = {"path": file.path}
+    data = {"name": file.name}
 
     r = client.put(
         f"{settings.API_V1_STR}/files/{file.id}",

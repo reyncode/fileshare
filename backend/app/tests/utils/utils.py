@@ -7,7 +7,7 @@ def random_lower_string(len: int) -> str:
 def random_email() -> str:
     return f"{random_lower_string(32)}@{random_lower_string(32)}.com"
 
-def random_path() -> str:
-    return f"/{random_lower_string(3)}/{random_lower_string(4)}/{random_lower_string(12)}.{random_lower_string(3)}"
+def random_name() -> str:
+    return f"{random_lower_string(12)}.{random_lower_string(3)}"
 
 

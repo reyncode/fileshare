@@ -81,17 +81,17 @@ const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
           <ModalHeader>Edit File</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl isInvalid={!!errors.path}>
-              <FormLabel htmlFor="path">Path</FormLabel>
+            <FormControl isInvalid={!!errors.name}>
+              <FormLabel htmlFor="name">Name</FormLabel>
               <Input
-                id="path"
-                {...register("path", {
-                  required: "Path is required",
+                id="name"
+                {...register("name", {
+                  required: "Name is required",
                 })}
                 type="text"
               />
-              {errors.path && (
-                <FormErrorMessage>{errors.path.message}</FormErrorMessage>
+              {errors.name && (
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
               )}
             </FormControl>
           </ModalBody>

@@ -19,7 +19,7 @@ class CRUDFiles():
         # TODO: logic to determine if this is a folder or file
 
         new_file = File(
-            path=file_in.path,
+            name=file_in.name,
             owner_id=owner_id,
             created_at=func.now(),
             updated_at=func.now(),
@@ -52,14 +52,14 @@ class CRUDFiles():
 
         return file
 
-    def read_file_by_path(
-        self, *, session: Session, path: str, owner_id: int
+    def read_file_by_name(
+        self, *, session: Session, name: str, owner_id: int
     ) -> File | None:
         """
-        Read the database file by it's path for the provided owner_id.
+        Read the database file by it's name for the provided owner_id.
         """
         return session.scalars(
-            select(File).filter_by(path=path, owner_id=owner_id)
+            select(File).filter_by(name=name, owner_id=owner_id)
         ).first()
 
     def read_file_count_by_owner_id(
