@@ -62,7 +62,7 @@ class CRUDFiles():
             select(File).filter_by(path=path, owner_id=owner_id)
         ).first()
 
-    def read_file_count_by_user_id(
+    def read_file_count_by_owner_id(
         self, *, session: Session, user_id: int
     ) -> int:
         count = session.scalar(
@@ -71,13 +71,13 @@ class CRUDFiles():
 
         return 0 if count == None else count
 
-    def read_all_files_by_user_id(
+    def read_all_files_by_owner_id(
         self, *, session: Session, user_id: int, skip: int = 0, limit: int = 25
         ) -> List[File]:
         """
         Read all the database file's that have an owner_id of user_id.
         """
-        database_file_count = self.read_file_count_by_user_id(session=session, user_id=user_id)
+        database_file_count = self.read_file_count_by_owner_id(session=session, user_id=user_id)
         cached_file_count = redis.read_file_count_by_owner_id_from_cache(user_id)
 
         if database_file_count == cached_file_count:

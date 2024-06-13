@@ -53,8 +53,8 @@ def read_files(
     """
     Get a list of files with the current_user's id.
     """
-    count = file_crud.read_file_count_by_user_id(session=session, user_id=current_user.id)
-    all_files = file_crud.read_all_files_by_user_id(session=session, user_id=current_user.id, skip=skip, limit=limit)
+    count = file_crud.read_file_count_by_owner_id(session=session, user_id=current_user.id)
+    all_files = file_crud.read_all_files_by_owner_id(session=session, user_id=current_user.id, skip=skip, limit=limit)
 
     result = [to_pydantic(file, FilePublic) for file in all_files]
 

@@ -64,7 +64,7 @@ def test_read_file_by_path(session: Session) -> None:
     assert read_file.path == file.path
     assert jsonable_encoder(file) == jsonable_encoder(read_file)
 
-def test_read_all_files_by_user_id(session: Session) -> None:
+def test_read_all_files_by_owner_id(session: Session) -> None:
     user = create_random_user(session=session)
 
     assert user
@@ -80,7 +80,7 @@ def test_read_all_files_by_user_id(session: Session) -> None:
         file_2.id : file_2.path,
     }
 
-    file_list = file_crud.read_all_files_by_user_id(session=session, user_id=user.id)
+    file_list = file_crud.read_all_files_by_owner_id(session=session, user_id=user.id)
 
     assert len(file_dict) == len(file_list)
     assert jsonable_encoder(file_list[0]) != jsonable_encoder(file_list[1])

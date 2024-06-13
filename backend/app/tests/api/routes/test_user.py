@@ -18,7 +18,7 @@ def test_register_user(client: TestClient, session: Session) -> None:
 
         data = {"email": username, "password": password}
         r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
+            f"{settings.API_V1_STR}/users/register",
             json=data,
         )
 
@@ -41,7 +41,7 @@ def test_register_user_closed_registration_error(
 
         data = {"email": username, "password": password}
         r = client.post(
-            f"{settings.API_V1_STR}/users/signup",
+            f"{settings.API_V1_STR}/users/register",
             json=data,
         )
 
@@ -53,7 +53,7 @@ def test_register_user_already_exists_error(
 ) -> None:
     data = {"email": settings.TEST_USER_EMAIL, "password": settings.TEST_USER_PASSWORD}
     r = client.post(
-        f"{settings.API_V1_STR}/users/signup",
+        f"{settings.API_V1_STR}/users/register",
         json=data,
     )
 
