@@ -18,6 +18,29 @@ services:
     networks:
       - fileshare-public
 
+  storage:
+    image: localstack/localstack:stable
+    restart: no
+    volumes:
+      - app-storage-data:/var/lib/localstack
+      - ./localstack/cors-config.json:/config/cors-config.json
+      - ./localstack/init-storage.sh:/etc/localstack/init/ready.d/init-storage.sh
+    ports:
+      - "4566"
+      - "4510-4559"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=${S3_DEBUG_MODE?Variable not set}
+      - SERVICES=s3
+      - FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME?Variable not set}
+    command:
+      - /bin/bash
+      - -c
+      - chmod +x ./localstack/init-storage.sh
+    networks:
+      - fileshare-public
+
   cache:
     image: redis:alpine
     restart: no
@@ -101,6 +124,7 @@ services:
 
 volumes:
   app-db-data:
+  app-storage-data:
   cache:
     driver: local
 
