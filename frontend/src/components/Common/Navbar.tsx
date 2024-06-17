@@ -23,22 +23,16 @@ const Navbar = () => {
   const mutation = useMutation({
     mutationFn: (files: File[]) => {
       const handleFileUpload = async (file: File) => {
-        const key = `${file.name}`;
+        const key = FilesStorageService.generateKey(file.name)
         
-        // send file to storage
-        const url: any = await FilesStorageService.uploadFile(
-          file, 
-          bucketName, 
-          key
-        );
-        console.log(url)
+        await FilesStorageService.uploadFile(file, bucketName, key);
 
         const metadata: FileCreate = {
           name: file.name,
+          access_key: key,
           size: file.size
         };
 
-        // send metadata to our backend
         return FilesMetadataService.createFile({ requestBody: metadata });
       };
 

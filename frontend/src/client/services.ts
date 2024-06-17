@@ -2,9 +2,9 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 import s3 from "./aws-config.ts"
+import { v4 as uuidv4 } from 'uuid';
 
 import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserUpdate,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';
-import { ApiRequestOptions } from './core/ApiRequestOptions.ts';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -352,9 +352,8 @@ skip = 0,
 	 * @throws ApiError
 	 */
 	public static createFile(data: TDataCreateFile): CancelablePromise<FilePublic> {
-		const {
-requestBody,
-} = data;
+		const { requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/files/',
@@ -495,5 +494,13 @@ export class FilesStorageService {
     } catch (error) {
       throw new Error(`File download failed: ${(error as Error).message}`);
     }
+  }
+
+  public static generateKey(filename: string): string {
+    const uniqueId = uuidv4();
+    const extension = filename.split('.').pop();
+    const date = new Date().toISOString().split('T')[0];
+
+    return `${date}/${uniqueId}.${extension}`
   }
 }

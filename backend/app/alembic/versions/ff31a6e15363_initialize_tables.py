@@ -35,6 +35,7 @@ def upgrade() -> None:
         "file",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("access_key", sa.String(), nullable=False),
         sa.Column("size", sa.BigInteger(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
@@ -46,7 +47,10 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
+    op.create_unique_constraint("ix_file_access_key", "file", ["access_key"])
+
 def downgrade() -> None:
+    op.drop_constraint(constraint_name="ix_file_access_key", table_name='file', type_='unique')
     op.drop_table("file")
     op.drop_index(op.f("ix_user_email"), table_name="user")
     op.drop_table("user")

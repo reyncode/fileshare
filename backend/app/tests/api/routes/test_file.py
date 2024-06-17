@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.crud.file import file_crud
 from app.tests.utils.file import create_random_file
-from app.tests.utils.utils import random_name
+from app.tests.utils.utils import random_lower_string, random_name
 
 def test_create_file(
     client: TestClient,
@@ -12,8 +12,12 @@ def test_create_file(
     user_token_headers: dict[str, str],
 ) -> None:
     name = random_name()
+    key = random_lower_string(32)
 
-    data = {"name" : name}
+    data = {
+        "name" : name,
+        "access_key": key
+    }
 
     r = client.post(
         f"{settings.API_V1_STR}/files/",
@@ -52,7 +56,10 @@ def test_create_file_already_exists_error(
 
     file = create_random_file(session=session, owner_id=user_id)
 
-    data = {"name": file.name}
+    data = {
+        "name": file.name,
+        "access_key": file.access_key,
+    }
 
     r = client.post(
         f"{settings.API_V1_STR}/files/",

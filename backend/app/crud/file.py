@@ -18,6 +18,7 @@ class CRUDFiles():
         """
         new_file = File(
             name=file_in.name,
+            access_key=file_in.access_key,
             size=file_in.size,
             owner_id=owner_id,
             created_at=func.now(),

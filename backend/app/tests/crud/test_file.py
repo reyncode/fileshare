@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from app.crud.file import file_crud
 from app.schemas.file import FileCreate, FileUpdate
 from app.tests.utils.user import create_random_user
-from app.tests.utils.utils import random_name
+from app.tests.utils.utils import random_name, random_lower_string
 from app.tests.utils.file import create_random_file
 
 def test_create_file(session: Session) -> None:
@@ -13,8 +13,9 @@ def test_create_file(session: Session) -> None:
     assert user
 
     name = random_name()
+    key = random_lower_string(32)
 
-    file_in = FileCreate(name=name)
+    file_in = FileCreate(name=name, access_key=key)
     file = file_crud.create_file(session=session, file_in=file_in, owner_id=user.id)
 
     assert file
@@ -26,9 +27,11 @@ def test_create_file(session: Session) -> None:
 def test_create_files_same_name_different_user(session: Session) -> None:
     name = "file.png"
     size = 648
+    key_1 = random_lower_string(32)
+    key_2 = random_lower_string(32)
 
-    file_in_1 = FileCreate(name=name, size=size)
-    file_in_2 = FileCreate(name=name, size=size)
+    file_in_1 = FileCreate(name=name, access_key=key_1, size=size)
+    file_in_2 = FileCreate(name=name, access_key=key_2, size=size)
 
     user_1 = create_random_user(session=session)
     user_2 = create_random_user(session=session)

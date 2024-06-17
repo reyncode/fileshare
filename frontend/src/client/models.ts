@@ -15,12 +15,14 @@ export type HTTPValidationError = {
 
 export type FileCreate = {
 	name: string;
+  access_key: string;
   size?: number | null;
 };
 
 
 export type FilePublic = {
 	name: string;
+  access_key: string;
   size: number;
   created_at?: string | null;
   updated_at?: string | null;
@@ -31,6 +33,7 @@ export type FilePublic = {
 
 export type FileUpdate = {
 	name?: string | null;
+  accessKey?: string | null;
   size?: number | null;
 };
 

@@ -10,18 +10,17 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
 import { useMutation } from "@tanstack/react-query";
-import { FilePublic, UserPublic, FilesStorageService } from "../../client"
+import { FilePublic, FilesStorageService } from "../../client"
 import EditFile from "../Files/EditFile"
 import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
   type: string
-  value: FilePublic | UserPublic
+  value: FilePublic
   disabled?: boolean
-  fileKey: string,
 }
 
-const ActionsMenu = ({ type, value, disabled, fileKey }: ActionsMenuProps) => {
+const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
   const editUserModal = useDisclosure()
   const deleteModal = useDisclosure()
@@ -48,7 +47,7 @@ const ActionsMenu = ({ type, value, disabled, fileKey }: ActionsMenuProps) => {
         />
         <MenuList>
           <MenuItem
-            onClick={() => {mutation.mutate(fileKey)}}
+            onClick={() => {mutation.mutate(value.access_key)}}
             icon={<FiDownload fontSize="16px" />}
           >
             Download
