@@ -1,8 +1,10 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
+import s3 from "./aws-config.ts"
 
 import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserUpdate,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';
+import { ApiRequestOptions } from './core/ApiRequestOptions.ts';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -411,17 +413,16 @@ requestBody,
 		});
 	}
 
-	/**
-	 * Delete File
-	 * Delete a file.
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static deleteFile(data: TDataDeleteFile): CancelablePromise<Message> {
-		const {
-id,
-} = data;
-		return __request(OpenAPI, {
+  /**
+   * Delete File
+   * Delete a file.
+   * @returns Message Successful Response
+   * @throws ApiError
+   */
+  public static deleteFile(data: TDataDeleteFile): CancelablePromise<Message> {
+    const { id, } = data;
+
+    return __request(OpenAPI, {
 			method: 'DELETE',
 			url: '/api/v1/files/{id}',
 			path: {
@@ -430,7 +431,69 @@ id,
 			errors: {
 				422: `Validation Error`,
 			},
-		});
+    });
 	}
+}
 
+export class FilesStorageService {
+  /**
+   * Upload File
+   * Upload a file.
+   * @returns File Upload URL
+   * @throws Error
+   */
+  public static async uploadFile(file: File, bucketName: string, key: string): Promise<string> {
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+      Body: file,
+      ContentType: file.type,
+    };
+
+    try {
+      const data = await s3.upload(params).promise();
+      return data.Location;
+    } catch (error) {
+
+      console.log(`${(error as Error).message}`)
+
+      throw new Error(`File upload failed: ${(error as Error).message}`);
+    }
+  }
+
+  private static openFileURL(blob: Blob, filename: string) { 
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Download File
+   * Download a file.
+   * @returns Void
+   * @throws Error
+   */
+  public static async downloadFile(bucketName: string, key: string): Promise<void> {
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    try {
+      const data = await s3.getObject(params).promise();
+      const blob = new Blob([data.Body as ArrayBuffer], { type: data.ContentType });
+
+      this.openFileURL(blob, key);
+
+    } catch (error) {
+      throw new Error(`File download failed: ${(error as Error).message}`);
+    }
+  }
 }

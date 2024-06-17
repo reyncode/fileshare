@@ -1,29 +1,37 @@
-import { 
+import {
   Button, 
   Flex, 
-  // useToast,
-} from "@chakra-ui/react"
-import { 
-  FaFileAlt,
-} from "react-icons/fa"
-import { ChevronDownIcon } from '@chakra-ui/icons'
-import {
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react"
+import { FaFileAlt } from "react-icons/fa"
+import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useFilePicker } from 'use-file-picker';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type ApiError, type FileCreate, FilesMetadataService } from "../../client"
+import { 
+  type ApiError, 
+  type FileCreate, 
+  FilesMetadataService, 
+  FilesStorageService 
+} from "../../client"
 
 const Navbar = () => {
+  const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
   const queryClient = useQueryClient()
-  // const toast = useToast()
   const mutation = useMutation({
     mutationFn: (files: File[]) => {
       const handleFileUpload = async (file: File) => {
+        const key = `${file.name}`;
+        
         // send file to storage
+        const url: any = await FilesStorageService.uploadFile(
+          file, 
+          bucketName, 
+          key
+        );
+        console.log(url)
 
         const metadata: FileCreate = {
           name: file.name,

@@ -2,14 +2,15 @@ import {
   Button,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   useDisclosure,
 } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import { FiEdit, FiTrash } from "react-icons/fi"
-
-import type { FilePublic, UserPublic } from "../../client"
+import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
+import { useMutation } from "@tanstack/react-query";
+import { FilePublic, UserPublic, FilesStorageService } from "../../client"
 import EditFile from "../Files/EditFile"
 import Delete from "./DeleteAlert"
 
@@ -17,11 +18,24 @@ interface ActionsMenuProps {
   type: string
   value: FilePublic | UserPublic
   disabled?: boolean
+  fileKey: string,
 }
 
-const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
+const ActionsMenu = ({ type, value, disabled, fileKey }: ActionsMenuProps) => {
+  const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
   const editUserModal = useDisclosure()
   const deleteModal = useDisclosure()
+  const mutation = useMutation({
+    mutationFn: (key: string) => {
+      return FilesStorageService.downloadFile(bucketName, key)
+    },
+    onSuccess: () => {
+      console.log("success")
+    },
+    onError: (err: Error) => {
+      console.log(err.message)
+    }
+  })
 
   return (
     <>
@@ -34,11 +48,18 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         />
         <MenuList>
           <MenuItem
+            onClick={() => {mutation.mutate(fileKey)}}
+            icon={<FiDownload fontSize="16px" />}
+          >
+            Download
+          </MenuItem>
+          <MenuItem
             onClick={editUserModal.onOpen}
             icon={<FiEdit fontSize="16px" />}
           >
             Edit {type}
           </MenuItem>
+          <MenuDivider />
           <MenuItem
             onClick={deleteModal.onOpen}
             icon={<FiTrash fontSize="16px" />}
