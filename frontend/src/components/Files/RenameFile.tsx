@@ -2,7 +2,6 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
-  FormLabel,
   Input,
   Modal,
   ModalBody,
@@ -23,13 +22,13 @@ import {
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
-interface EditFileProps {
+interface RenameFileProps {
   file: FilePublic
   isOpen: boolean
   onClose: () => void
 }
 
-const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
+const RenameFile = ({ file, isOpen, onClose }: RenameFileProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -78,11 +77,10 @@ const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
       >
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Edit File</ModalHeader>
+          <ModalHeader>Rename</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalBody pb={2}>
             <FormControl isInvalid={!!errors.name}>
-              <FormLabel htmlFor="name">Name</FormLabel>
               <Input
                 id="name"
                 {...register("name", {
@@ -96,15 +94,21 @@ const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
             </FormControl>
           </ModalBody>
           <ModalFooter gap={3}>
+            <Button 
+              onClick={onCancel}
+              variant="outline"
+            >
+              Cancel
+            </Button>
             <Button
               variant="primary"
               type="submit"
               isLoading={isSubmitting}
               isDisabled={!isDirty}
+              minW={20}
             >
-              Save
+              Ok
             </Button>
-            <Button onClick={onCancel}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -112,4 +116,4 @@ const EditFile = ({ file, isOpen, onClose }: EditFileProps) => {
   )
 }
 
-export default EditFile
+export default RenameFile

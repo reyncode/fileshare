@@ -11,7 +11,7 @@ import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
 import { useMutation } from "@tanstack/react-query";
 import { FilePublic, FilesStorageService } from "../../client"
-import EditFile from "../Files/EditFile"
+import RenameFile from "../Files/RenameFile"
 import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
@@ -22,7 +22,7 @@ interface ActionsMenuProps {
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
-  const editUserModal = useDisclosure()
+  const renameFileModal = useDisclosure()
   const deleteModal = useDisclosure()
   const mutation = useMutation({
     mutationFn: (file: FilePublic) => {
@@ -53,10 +53,10 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             Download
           </MenuItem>
           <MenuItem
-            onClick={editUserModal.onOpen}
+            onClick={renameFileModal.onOpen}
             icon={<FiEdit fontSize="16px" />}
           >
-            Edit {type}
+            Rename
           </MenuItem>
           <MenuDivider />
           <MenuItem
@@ -64,14 +64,14 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             icon={<FiTrash fontSize="16px" />}
             color="ui.danger"
           >
-            Delete {type}
+            Delete
           </MenuItem>
         </MenuList>
 
-        <EditFile
+        <RenameFile
           file={value as FilePublic}
-          isOpen={editUserModal.isOpen}
-          onClose={editUserModal.onClose}
+          isOpen={renameFileModal.isOpen}
+          onClose={renameFileModal.onClose}
         />
         <Delete
           type={type}
