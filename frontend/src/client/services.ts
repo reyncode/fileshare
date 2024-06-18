@@ -479,7 +479,7 @@ export class FilesStorageService {
    * @returns Void
    * @throws Error
    */
-  public static async downloadFile(bucketName: string, key: string): Promise<void> {
+  public static async downloadFile(bucketName: string, key: string, filename: string): Promise<void> {
     const params = {
       Bucket: bucketName,
       Key: key,
@@ -489,7 +489,7 @@ export class FilesStorageService {
       const data = await s3.getObject(params).promise();
       const blob = new Blob([data.Body as ArrayBuffer], { type: data.ContentType });
 
-      this.openFileURL(blob, key);
+      this.openFileURL(blob, filename);
 
     } catch (error) {
       throw new Error(`File download failed: ${(error as Error).message}`);

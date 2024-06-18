@@ -25,8 +25,8 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const editUserModal = useDisclosure()
   const deleteModal = useDisclosure()
   const mutation = useMutation({
-    mutationFn: (key: string) => {
-      return FilesStorageService.downloadFile(bucketName, key)
+    mutationFn: (file: FilePublic) => {
+      return FilesStorageService.downloadFile(bucketName, file.access_key, file.name)
     },
     onSuccess: () => {
       console.log("success")
@@ -47,7 +47,7 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         />
         <MenuList>
           <MenuItem
-            onClick={() => {mutation.mutate(value.access_key)}}
+            onClick={() => {mutation.mutate(value)}}
             icon={<FiDownload fontSize="16px" />}
           >
             Download
