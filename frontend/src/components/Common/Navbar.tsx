@@ -16,9 +16,10 @@ import {
   FilesMetadataService, 
   FilesStorageService 
 } from "../../client"
+import config from "../../config"
 
 const Navbar = () => {
-  const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
+  const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: (files: File[]) => {

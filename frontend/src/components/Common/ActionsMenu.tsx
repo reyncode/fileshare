@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FilePublic, FilesStorageService } from "../../client"
 import RenameFile from "../Files/RenameFile"
 import Delete from "./DeleteAlert"
+import config from "../../config"
 
 interface ActionsMenuProps {
   type: string
@@ -21,7 +22,7 @@ interface ActionsMenuProps {
 }
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
-  const bucketName = import.meta.env.VITE_FILE_BUCKET_URL;
+  const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
   const renameFileModal = useDisclosure()
   const deleteModal = useDisclosure()
   const mutation = useMutation({

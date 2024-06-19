@@ -65,7 +65,7 @@ services:
       - fileshare-public
 
   dev-frontend:
-    image: node:20
+    image: node:latest
     working_dir: /app
     restart: no
     networks:
@@ -74,24 +74,29 @@ services:
       - ./frontend:/app
     environment:
       - WATCHPACK_POLLING=true
+      - REACT_APP_BACKEND_URL=http://${DOMAIN}:8000
+      - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
+      - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
+      - NODE_ENV=development
     ports:
-      - '5173:5173'
-    command: npm run dev -- --host
+      - "3000:3000"
+    command: npm start
 
-  frontend:
-    restart: no
-    networks:
-      - fileshare-public
-    build:
-      context: ./frontend
-      args:
-        - VITE_API_URL=http://${DOMAIN?Variable not set}
-        - NODE_ENV=development
-    ports:
-      - "80:80"
-    depends_on:
-      - dev-frontend
-      - backend
+  # frontend:
+  #   restart: no
+  #   networks:
+  #     - fileshare-public
+  #   build:
+  #     context: ./frontend
+  #     args:
+  #       - REACT_APP_BACKEND_URL=http://${DOMAIN}:8000
+  #       - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
+  #       - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
+  #       - NODE_ENV=production
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
 
   backend:
     restart: on-failure:3
@@ -118,7 +123,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "8000"
+      - "8000:8000"
     networks:
       - fileshare-public
 

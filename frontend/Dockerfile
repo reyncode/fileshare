@@ -9,14 +9,17 @@ RUN npm install
 
 COPY ./ /app/
 
-ARG VITE_API_URL=${VITE_API_URL}
+ARG REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+ARG REACT_APP_STORAGE_URL=${REACT_APP_STORAGE_URL}
+ARG REACT_APP_FILE_BUCKET_NAME=${REACT_APP_FILE_BUCKET_NAME}
+ARG NODE_ENV=${NODE_ENV}
 
 RUN npm run build
 
 # Serve the frontend with Nginx
 FROM nginx:latest
 
-COPY --from=frontend-build /app/dist/ /usr/share/nginx/html
+COPY --from=frontend-build /app/build/ /usr/share/nginx/html
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 

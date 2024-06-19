@@ -1,7 +1,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import s3 from "./aws-config.ts"
+import s3 from "./aws-config"
 import { v4 as uuidv4 } from 'uuid';
 
 import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserUpdate,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';

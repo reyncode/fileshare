@@ -23,7 +23,7 @@ import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
 import { datetimeFormatter, formatBytes } from "../../utils"
 
-export const Route = createFileRoute("/_layout/files")({
+export const Route = createFileRoute("/_layout/files" as never)({
   component: Files,
 })
 

@@ -27,13 +27,11 @@ import {
   UsersService,
   type ApiError,
 } from "../client"
-import LogoDark from "/assets/images/fileshare-logo-dark.svg"
-import LogoLight from "/assets/images/fileshare-logo-light.svg"
 import { emailPattern } from "../utils"
 import { useState } from "react"
 import { AxiosError } from "axios"
 
-export const Route = createFileRoute("/register")({
+export const Route = createFileRoute("/register" as never)({
   component: Register
 })
 
@@ -42,6 +40,8 @@ interface UserCreateForm extends UserCreate {
 }
 
 function Register () {
+  const darkLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-dark.svg`
+  const lightLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-light.svg`
   const { colorMode } = useColorMode()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
@@ -67,7 +67,6 @@ function Register () {
     mutationFn: (data: UserCreate) =>
       UsersService.createUser({ requestBody: data }),
     onSuccess: () => {
-      // TODO: authenticate the user
       reset()
       navigate({ to: "/login" })
     },
@@ -106,7 +105,7 @@ function Register () {
         centerContent
       >
         <Image
-          src={ colorMode === "light" ? LogoDark : LogoLight }
+          src={ colorMode === "light" ? darkLogo : lightLogo }
           alt="FastAPI logo"
           height="auto"
           maxW="2xs"

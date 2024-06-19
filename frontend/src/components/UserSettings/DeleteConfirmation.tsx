@@ -1,3 +1,4 @@
+import React from "react"
 import {
   AlertDialog,
   AlertDialogBody,
@@ -8,7 +9,6 @@ import {
   Button,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import React from "react"
 import { useForm } from "react-hook-form"
 
 import { type ApiError, UsersService } from "../../client"

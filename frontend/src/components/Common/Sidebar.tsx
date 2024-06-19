@@ -15,12 +15,12 @@ import {
 } from "@chakra-ui/react"
 import { FiLogOut, FiMenu } from "react-icons/fi"
 
-import LogoDark from "/assets/images/fileshare-logo-dark.svg"
-import LogoLight from "/assets/images/fileshare-logo-light.svg"
 import useAuth from "../../hooks/useAuth"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
+  const darkLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-dark.svg`
+  const lightLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-light.svg`
   const { colorMode } = useColorMode()
   const bgColor = useColorModeValue("ui.light", "ui.dark")
   const secBgColor = useColorModeValue("ui.secondary", "ui.darkSlate")
@@ -51,7 +51,7 @@ const Sidebar = () => {
             <Flex flexDir="column" justify="space-between">
               <Box>
                 <Image 
-                  src={ colorMode === "light" ? LogoDark : LogoLight }
+                  src={ colorMode === "light" ? darkLogo : lightLogo }
                   alt="logo" 
                   p={6} 
                 />
@@ -91,7 +91,7 @@ const Sidebar = () => {
         >
           <Box>
             <Image 
-              src={ colorMode === "light" ? LogoDark : LogoLight }
+              src={ colorMode === "light" ? darkLogo : lightLogo }
               alt="Logo" 
               w="180px" 
               maxW="2xs" 

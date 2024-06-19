@@ -24,13 +24,11 @@ import {
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import LogoDark from "/assets/images/fileshare-logo-dark.svg"
-import LogoLight from "/assets/images/fileshare-logo-light.svg"
 import type { Body_login_login_access_token as AccessToken } from "../client"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/login" as never)({
   component: Login,
   beforeLoad: async () => {
     if (isLoggedIn()) {
@@ -42,6 +40,8 @@ export const Route = createFileRoute("/login")({
 })
 
 function Login() {
+  const darkLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-dark.svg`
+  const lightLogo = `${process.env.PUBLIC_URL}/assets/images/fileshare-logo-light.svg`
   const { colorMode } = useColorMode()
   const [show, setShow] = useBoolean()
   const { loginMutation, error, resetError } = useAuth()
@@ -83,7 +83,7 @@ function Login() {
         centerContent
       >
         <Image
-          src={ colorMode === "light" ? LogoDark : LogoLight }
+          src={ colorMode === "light" ? darkLogo : lightLogo }
           alt="Fileshare logo"
           height="auto"
           maxW="2xs"
