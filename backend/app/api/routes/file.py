@@ -17,15 +17,10 @@ def create_file(
     """
     Create a new file database object with name owned by the current user.
     """
-    # TODO: instead of 400, rename the file to _1 or something similar for duplicate file names. 
-
     file = file_crud.read_file_by_name(session=session, name=file_in.name, owner_id=current_user.id)
 
     if file:
-        raise HTTPException(
-            status_code=400,
-            detail="A file with the same name already exists"
-        )
+        file_in.name = file_crud.generate_unique_name(session=session, name=file_in.name, owner_id=current_user.id)
 
     file = file_crud.create_file(session=session, file_in=file_in, owner_id=current_user.id)
 

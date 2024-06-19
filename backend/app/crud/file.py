@@ -132,4 +132,23 @@ class CRUDFiles():
 
         return Message(message="File deleted successfully")
 
+    def generate_unique_name(
+        self, *, session: Session, name: str, owner_id: int
+    ) -> str:
+        base, extension = name.rsplit('.', 1)
+
+        existing_names = session.scalars(
+            select(File.name).filter(File.name.like(f"{base}%")).where(File.owner_id == owner_id)
+        ).all()
+
+        if name not in existing_names:
+            return name
+
+        i = 1
+        while True:
+            new_name = f"{base}_{i}.{extension}"
+            if new_name not in existing_names:
+                return new_name
+            i += 1
+
 file_crud = CRUDFiles()

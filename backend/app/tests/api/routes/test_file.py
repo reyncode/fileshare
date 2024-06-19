@@ -42,33 +42,58 @@ def test_create_file(
     assert file.name == name
     assert file.owner_id == new_file["owner_id"]
 
-def test_create_file_already_exists_error(
-    client: TestClient, session: Session, user_token_headers: dict[str, str]
+def test_create_file_duplicate_names(
+    client: TestClient,
+    session: Session,
+    user_token_headers: dict[str, str],
 ) -> None:
+    name = "file.png"
+    size = 648
+    key_1 = random_lower_string(32)
+    key_2 = random_lower_string(32)
+    key_3 = random_lower_string(32)
+
+    file_data_1 = {
+        "name": name,
+        "access_key": key_1,
+        "size": size
+    }
+
+    file_data_2 = {
+        "name": name,
+        "access_key": key_2,
+        "size": size
+    }
+
+    file_data_3 = {
+        "name": name,
+        "access_key": key_3,
+        "size": size
+    }
+
+    files_data = [file_data_1, file_data_2, file_data_3]
+    for file_data in files_data:
+        r = client.post(
+            f"{settings.API_V1_STR}/files/",
+            headers=user_token_headers,
+            json=file_data,
+        )
+        assert r.status_code == 200
+
     r = client.get(
         f"{settings.API_V1_STR}/users/me",
         headers=user_token_headers,
     )
 
-    assert r.status_code == 200
-
     user_id = r.json()["id"]
 
-    file = create_random_file(session=session, owner_id=user_id)
+    file_1 = file_crud.read_file_by_name(session=session, name="file.png", owner_id=user_id)
+    file_2 = file_crud.read_file_by_name(session=session, name="file_1.png", owner_id=user_id)
+    file_3 = file_crud.read_file_by_name(session=session, name="file_2.png", owner_id=user_id)
 
-    data = {
-        "name": file.name,
-        "access_key": file.access_key,
-    }
-
-    r = client.post(
-        f"{settings.API_V1_STR}/files/",
-        headers=user_token_headers,
-        json=data,
-    )
-
-    assert r.status_code == 400
-    assert r.json()["detail"] == "A file with the same name already exists"
+    assert file_1
+    assert file_2
+    assert file_3
 
 def test_read_file(
     client: TestClient, session: Session, user_token_headers: dict[str, str]
