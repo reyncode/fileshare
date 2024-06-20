@@ -453,9 +453,6 @@ export class FilesStorageService {
       const data = await s3.upload(params).promise();
       return data.Location;
     } catch (error) {
-
-      console.log(`${(error as Error).message}`)
-
       throw new Error(`File upload failed: ${(error as Error).message}`);
     }
   }
@@ -493,6 +490,19 @@ export class FilesStorageService {
 
     } catch (error) {
       throw new Error(`File download failed: ${(error as Error).message}`);
+    }
+  }
+
+  public static async deleteFile(bucketName: string, key: string): Promise<void> {
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    try {
+      await s3.deleteObject(params).promise();
+    } catch (error) {
+      throw new Error(`File delete failed: ${(error as Error).message}`);
     }
   }
 

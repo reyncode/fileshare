@@ -15,7 +15,7 @@ import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
 import { useMutation } from "@tanstack/react-query";
 import { FilePublic, FilesStorageService } from "../../client"
 import RenameFile from "../Files/RenameFile"
-import Delete from "./DeleteAlert"
+import Delete from "../Files/DeleteFile"
 import config from "../../config"
 
 interface ActionsMenuProps {
@@ -24,7 +24,7 @@ interface ActionsMenuProps {
   disabled?: boolean
 }
 
-const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
+const ActionsMenu = ({ value, disabled }: ActionsMenuProps) => {
   const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
   const renameFileModal = useDisclosure()
   const deleteModal = useDisclosure()
@@ -112,8 +112,7 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           onClose={renameFileModal.onClose}
         />
         <Delete
-          type={type}
-          id={value.id}
+          file={value}
           isOpen={deleteModal.isOpen}
           onClose={deleteModal.onClose}
         />

@@ -9,43 +9,34 @@ import {
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
-import { useForm } from "react-hook-form"
+import config from "../../config"
 
-import { FilesMetadataService, UsersService } from "../../client"
+import { FilePublic, FilesMetadataService, FilesStorageService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 
-interface DeleteProps {
-  type: string
-  id: number
+interface DeleteFileProps {
+  file: FilePublic
   isOpen: boolean
   onClose: () => void
 }
 
-const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
+const Delete = ({ file, isOpen, onClose }: DeleteFileProps) => {
+  const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const cancelRef = React.useRef<HTMLButtonElement | null>(null)
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm()
 
-  const deleteEntity = async (id: number) => {
-    if (type === "File") {
-      await FilesMetadataService.deleteFile({ id: id })
-    } else if (type === "User") {
-      await UsersService.deleteUser()
-    } else {
-      throw new Error(`Unexpected type: ${type}`)
-    }
+  const deleteFile = async (file: FilePublic) => {
+    await FilesStorageService.deleteFile(bucketName, file.access_key);
+    await FilesMetadataService.deleteFile({ id: file.id })
   }
 
   const mutation = useMutation({
-    mutationFn: deleteEntity,
+    mutationFn: deleteFile,
     onSuccess: () => {
       showToast(
         "Success",
-        `The ${type.toLowerCase()} was deleted successfully.`,
+        "The file was deleted successfully.",
         "success",
       )
       onClose()
@@ -53,19 +44,19 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
     onError: () => {
       showToast(
         "An error occurred.",
-        `An error occurred while deleting the ${type.toLowerCase()}.`,
+        "An error occurred while deleting the file.",
         "error",
       )
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: [type === "File" ? "files" : "users"],
+        queryKey: ["files"],
       })
     },
   })
 
-  const onSubmit = async () => {
-    mutation.mutate(id)
+  const onSubmit = async (file: FilePublic) => {
+    mutation.mutate(file)
   }
 
   return (
@@ -78,27 +69,24 @@ const Delete = ({ type, id, isOpen, onClose }: DeleteProps) => {
         isCentered
       >
         <AlertDialogOverlay>
-          <AlertDialogContent as="form" onSubmit={handleSubmit(onSubmit)}>
-            <AlertDialogHeader>Delete {type}</AlertDialogHeader>
+          <AlertDialogContent>
+            <AlertDialogHeader>Delete File</AlertDialogHeader>
 
             <AlertDialogBody>
-              {type === "User" && (
-                <span>
-                  All items associated with this user will also be{" "}
-                  <strong>permantly deleted. </strong>
-                </span>
-              )}
               Are you sure? You will not be able to undo this action.
             </AlertDialogBody>
 
             <AlertDialogFooter gap={3}>
-              <Button variant="danger" type="submit" isLoading={isSubmitting}>
+              <Button 
+                variant="danger" 
+                type="submit" 
+                onClick={() => onSubmit(file)}
+              >
                 Delete
               </Button>
               <Button
                 ref={cancelRef}
                 onClick={onClose}
-                isDisabled={isSubmitting}
               >
                 Cancel
               </Button>
