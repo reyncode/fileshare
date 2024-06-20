@@ -1,6 +1,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
+import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import s3 from "./aws-config"
 import { v4 as uuidv4 } from 'uuid';
 
@@ -441,7 +442,7 @@ export class FilesStorageService {
    * @returns File Upload URL
    * @throws Error
    */
-  public static async uploadFile(file: File, bucketName: string, key: string): Promise<string> {
+  public static async uploadFile(file: File, bucketName: string, key: string): Promise<void> {
     const params = {
       Bucket: bucketName,
       Key: key,
@@ -450,8 +451,8 @@ export class FilesStorageService {
     };
 
     try {
-      const data = await s3.upload(params).promise();
-      return data.Location;
+      const command = new PutObjectCommand(params);
+      await s3.send(command);
     } catch (error) {
       throw new Error(`File upload failed: ${(error as Error).message}`);
     }
@@ -483,8 +484,19 @@ export class FilesStorageService {
     };
 
     try {
-      const data = await s3.getObject(params).promise();
-      const blob = new Blob([data.Body as ArrayBuffer], { type: data.ContentType });
+      const command = new GetObjectCommand(params);
+      const response = await s3.send(command);
+
+      const streamToBlob = async (stream: any) => {
+        const chunks = [];
+        for await (const chunk of stream) {
+          chunks.push(chunk);
+        }
+        const blob = new Blob(chunks);
+        return blob;
+      };
+
+      const blob = await streamToBlob(response.Body);
 
       this.openFileURL(blob, filename);
 
@@ -500,7 +512,8 @@ export class FilesStorageService {
     };
 
     try {
-      await s3.deleteObject(params).promise();
+      const command = new DeleteObjectCommand(params);
+      await s3.send(command);
     } catch (error) {
       throw new Error(`File delete failed: ${(error as Error).message}`);
     }

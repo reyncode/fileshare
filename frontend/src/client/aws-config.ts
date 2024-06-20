@@ -1,12 +1,14 @@
-import AWS from "aws-sdk";
+import { S3Client } from "@aws-sdk/client-s3";
 import config from "../config"
 
-const s3 = new AWS.S3({
-    accessKeyId: "access-key-id",
-    secretAccessKey: "secret-access-key",
+const s3 = new S3Client({
     region: "ca-central-1",
     endpoint: config.REACT_APP_STORAGE_URL,
-    s3ForcePathStyle: true,
+    forcePathStyle: true,
+    credentials: {
+        accessKeyId: "access-key-id",
+        secretAccessKey: "secret-access-key",
+    },
 });
 
 export default s3;
