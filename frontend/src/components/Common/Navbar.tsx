@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   Button, 
   Flex, 
@@ -5,6 +6,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useToast,
+  ToastId,
 } from "@chakra-ui/react"
 import { FaFileAlt } from "react-icons/fa"
 import { ChevronDownIcon } from '@chakra-ui/icons'
@@ -21,8 +24,19 @@ import config from "../../config"
 const Navbar = () => {
   const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
   const queryClient = useQueryClient()
+  const toast = useToast()
+  const toastIdRef = useRef<ToastId | undefined>(undefined);
   const mutation = useMutation({
     mutationFn: (files: File[]) => {
+      toastIdRef.current = toast({
+        title: `Uploading`,
+        description: `Files are being uploaded`,
+        status: "info",
+        isClosable: true,
+        position: "bottom-right",
+        duration: null,
+      })
+
       const handleFileUpload = async (file: File) => {
         const key = FilesStorageService.generateKey(file.name)
         
@@ -41,11 +55,34 @@ const Navbar = () => {
       return Promise.all(files.map(file => handleFileUpload(file)));
     },
     onSuccess: () => {
-      console.log("success")
+      if (toastIdRef.current) {
+        toast.update(toastIdRef.current, {
+          title: "Success",
+          description: "All files uploaded successfully",
+          status: "success",
+          isClosable: true,
+          position: "bottom-right",
+          duration: 5000,
+        })
+      } else {
+        console.error('Toast ID is undefined');
+      }
     },
     onError: (err: ApiError) => {
-      const errDetail = (err.body as any)?.detail || "An unknown error occurred";
-      console.log(errDetail)
+      const errDetail = (err.body as any)?.detail || (err.message as any);
+      if (toastIdRef.current) {
+        toast.update(toastIdRef.current, {
+          title: "Error",
+          description: `${errDetail}`,
+          status: "error",
+          isClosable: true,
+          position: "bottom-right",
+          duration: 5000,
+        })
+      } else {
+        console.error('Toast ID is undefined');
+      }
+      console.error(errDetail)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] })
