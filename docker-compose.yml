@@ -64,39 +64,51 @@ services:
     networks:
       - fileshare-public
 
-  dev-frontend:
-    image: node:latest
-    working_dir: /app
-    restart: no
-    networks:
-      - fileshare-public
-    volumes:
-      - ./frontend:/app
-    environment:
-      - WATCHPACK_POLLING=true
-      - REACT_APP_BACKEND_URL=http://${DOMAIN}:8000
-      - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
-      - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
-      - NODE_ENV=development
-    ports:
-      - "3000:3000"
-    command: npm start
-
-  # frontend:
+  # dev-frontend:
+  #   image: node:latest
+  #   working_dir: /app
   #   restart: no
   #   networks:
   #     - fileshare-public
-  #   build:
-  #     context: ./frontend
-  #     args:
-  #       - REACT_APP_BACKEND_URL=http://${DOMAIN}:8000
-  #       - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
-  #       - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
-  #       - NODE_ENV=production
+  #   volumes:
+  #     - ./frontend:/app
+  #   environment:
+  #     - WATCHPACK_POLLING=true
+  #     - REACT_APP_BACKEND_URL=http://${DOMAIN}:8000
+  #     - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
+  #     - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
+  #     - NODE_ENV=development
   #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - backend
+  #     - "3000:3000"
+  #   command: npm start
+
+  frontend:
+    restart: no
+    networks:
+      - fileshare-public
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_URL=http://${DOMAIN}:8080
+        - REACT_APP_STORAGE_URL=http://${DOMAIN}:4566
+        - REACT_APP_FILE_BUCKET_NAME=${S3_FILE_BUCKET_NAME}
+        - NODE_ENV=production
+    ports:
+      - "80:80"
+    depends_on:
+      - balancer
+
+  balancer:
+    image: nginx:latest  
+    restart: no
+    networks:
+      - fileshare-public
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
 
   backend:
     restart: on-failure:3
