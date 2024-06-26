@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="frontend/public/assets/images/fileshare-logo-dark.svg" alt="Fileshare logo" width="40%" style="padding-bottom:25px; align: center"/>
+    <img src="frontend/public/assets/images/fileshare-logo-dark.svg" alt="Fileshare logo" width="40%" style="padding-bottom:65px; align: center"/>
 </p>
 
 Fileshare is a cloud storage application like Google Drive or Dropbox. Users can upload their files to a cloud server on one machine and then download them on another. 
