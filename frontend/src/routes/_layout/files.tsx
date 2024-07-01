@@ -46,7 +46,7 @@ function FilesTableBody() {
           <Td>{datetimeFormatter(file.updated_at)}</Td>
           <Td>{formatBytes(file.size)}</Td>
           <Td>
-            <ActionsMenu type={"File"} value={file} />
+            <ActionsMenu value={file} />
           </Td>
         </Tr>
       ))}

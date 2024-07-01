@@ -19,7 +19,6 @@ import Delete from "../Files/DeleteFile"
 import config from "../../config"
 
 interface ActionsMenuProps {
-  type: string
   value: FilePublic
   disabled?: boolean
 }
