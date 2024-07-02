@@ -10,7 +10,6 @@ import {
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { LoginService } from "../client"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
 import { emailPattern } from "../utils"
@@ -38,10 +37,8 @@ function RecoverPassword() {
   } = useForm<FormData>()
   const showToast = useCustomToast()
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    await LoginService.recoverPassword({
-      email: data.email,
-    })
+  const onSubmit: SubmitHandler<FormData> = async () => {
+    console.error("recoverPassword not implemented.")
     showToast(
       "Email sent.",
       "We sent an email with a link to get back into your account.",

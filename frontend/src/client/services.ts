@@ -1,28 +1,31 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { 
+  PutObjectCommand, 
+  GetObjectCommand, 
+  DeleteObjectCommand 
+} from '@aws-sdk/client-s3';
 import s3 from "./aws-config"
 import { v4 as uuidv4 } from 'uuid';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserUpdate,FileCreate,FilePublic,FilesPublic,FileUpdate } from './models';
+import type { 
+  Body_login_login_access_token,
+  Message,
+  NewPassword,
+  Token,
+  UserPublic,
+  UpdatePassword,
+  UserCreate,
+  UserUpdate,
+  FileCreate,
+  FilePublic,
+  FilesPublic,
+  FileUpdate 
+} from './models';
 
-export type TDataLoginAccessToken = {
-                formData: Body_login_login_access_token
-                
-            }
-export type TDataRecoverPassword = {
-                email: string
-                
-            }
-export type TDataResetPassword = {
-                requestBody: NewPassword
-                
-            }
-export type TDataRecoverPasswordHtmlContent = {
-                email: string
-                
-            }
+export type TDataLoginAccessToken = { formData: Body_login_login_access_token }
+export type TDataResetPassword = { requestBody: NewPassword }
 
 export class LoginService {
 
@@ -33,9 +36,8 @@ export class LoginService {
 	 * @throws ApiError
 	 */
 	public static loginAccessToken(data: TDataLoginAccessToken): CancelablePromise<Token> {
-		const {
-formData,
-} = data;
+		const { formData } = data;
+
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/login/access-token',
@@ -54,31 +56,9 @@ formData,
 	 * @throws ApiError
 	 */
 	public static testToken(): CancelablePromise<UserPublic> {
-				return __request(OpenAPI, {
+      return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/login/test-token',
-		});
-	}
-
-	/**
-	 * Recover Password
-	 * Password Recovery
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static recoverPassword(data: TDataRecoverPassword): CancelablePromise<Message> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
 		});
 	}
 
@@ -89,9 +69,8 @@ email,
 	 * @throws ApiError
 	 */
 	public static resetPassword(data: TDataResetPassword): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
+		const { requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/reset-password/',
@@ -102,29 +81,6 @@ requestBody,
 			},
 		});
 	}
-
-	/**
-	 * Recover Password Html Content
-	 * HTML Content for Password Recovery
-	 * @returns string Successful Response
-	 * @throws ApiError
-	 */
-	public static recoverPasswordHtmlContent(data: TDataRecoverPasswordHtmlContent): CancelablePromise<string> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery-html-content/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
 }
 
 export type TDataReadUsers = {
