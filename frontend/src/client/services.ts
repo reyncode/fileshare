@@ -224,27 +224,26 @@ export class UsersService {
 }
 
 export type TDataReadFiles = {
-                limit?: number
-skip?: number
-                
-            }
+  limit?: number;
+  skip?: number;
+}
+
 export type TDataCreateFile = {
-                requestBody: FileCreate
-                
-            }
+  requestBody: FileCreate;
+}
+
 export type TDataReadFile = {
-                id: number
-                
-            }
+  id: number;
+}
+
 export type TDataUpdateFile = {
-                id: number
-requestBody: FileUpdate
-                
-            }
+  id: number;
+  requestBody: FileUpdate;
+}
+
 export type TDataDeleteFile = {
-                id: number
-                
-            }
+  id: number;
+}
 
 export class FilesMetadataService {
 
@@ -255,10 +254,8 @@ export class FilesMetadataService {
 	 * @throws ApiError
 	 */
 	public static readFiles(data: TDataReadFiles = {}): CancelablePromise<FilesPublic> {
-		const {
-limit = 25,
-skip = 0,
-} = data;
+		const { limit = 25, skip = 0 } = data;
+
 		return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/files/',
@@ -298,9 +295,8 @@ skip = 0,
 	 * @throws ApiError
 	 */
 	public static readFile(data: TDataReadFile): CancelablePromise<FilePublic> {
-		const {
-id,
-} = data;
+		const { id } = data;
+
 		return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/files/{id}',
@@ -320,10 +316,8 @@ id,
 	 * @throws ApiError
 	 */
 	public static updateFile(data: TDataUpdateFile): CancelablePromise<FilePublic> {
-		const {
-id,
-requestBody,
-} = data;
+		const { id, requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'PUT',
 			url: '/api/v1/files/{id}',
@@ -345,7 +339,7 @@ requestBody,
    * @throws ApiError
    */
   public static deleteFile(data: TDataDeleteFile): CancelablePromise<Message> {
-    const { id, } = data;
+    const { id } = data;
 
     return __request(OpenAPI, {
 			method: 'DELETE',
