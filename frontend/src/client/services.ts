@@ -223,37 +223,6 @@ export class UsersService {
 
 }
 
-export type TDataTestEmail = {
-                emailTo: string
-                
-            }
-
-export class UtilsService {
-
-	/**
-	 * Test Email
-	 * Test emails.
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static testEmail(data: TDataTestEmail): CancelablePromise<Message> {
-		const {
-emailTo,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/utils/test-email/',
-			query: {
-				email_to: emailTo
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-}
-
 export type TDataReadFiles = {
                 limit?: number
 skip?: number
