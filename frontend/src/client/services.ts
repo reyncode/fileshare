@@ -24,8 +24,13 @@ import type {
   FileUpdate 
 } from './models';
 
-export type TDataLoginAccessToken = { formData: Body_login_login_access_token }
-export type TDataResetPassword = { requestBody: NewPassword }
+export type TDataLoginAccessToken = { 
+  formData: Body_login_login_access_token;
+}
+
+export type TDataResetPassword = { 
+  requestBody: NewPassword;
+}
 
 export class LoginService {
 
@@ -84,26 +89,25 @@ export class LoginService {
 }
 
 export type TDataReadUsers = {
-                limit?: number
-skip?: number
-                
-            }
+  limit?: number;
+  skip?: number;
+}
+
 export type TDataCreateUser = {
-                requestBody: UserCreate
-                
-            }
+  requestBody: UserCreate;
+}
+
 export type TDataUpdateUser = {
-                requestBody: UserUpdate
-                
-            }
+  requestBody: UserUpdate;
+}
+
 export type TDataUpdatePasswordMe = {
-                requestBody: UpdatePassword
-                
-            }
+  requestBody: UpdatePassword;
+}
+
 export type TDataReadUserById = {
-                userId: number
-                
-            }
+  userId: number;
+}
 
 export class UsersService {
 
@@ -114,9 +118,8 @@ export class UsersService {
 	 * @throws ApiError
 	 */
 	public static createUser(data: TDataCreateUser): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
+		const { requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/users/register',
@@ -148,9 +151,8 @@ requestBody,
 	 * @throws ApiError
 	 */
 	public static updateUser(data: TDataUpdateUser): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
+		const { requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'PATCH',
 			url: '/api/v1/users/me',
@@ -169,9 +171,8 @@ requestBody,
 	 * @throws ApiError
 	 */
 	public static updatePasswordMe(data: TDataUpdatePasswordMe): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
+		const { requestBody } = data;
+
 		return __request(OpenAPI, {
 			method: 'PATCH',
 			url: '/api/v1/users/me/password',
@@ -190,9 +191,8 @@ requestBody,
 	 * @throws ApiError
 	 */
 	public static readUserById(data: TDataReadUserById): CancelablePromise<UserPublic> {
-		const {
-userId,
-} = data;
+		const { userId } = data;
+
 		return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/users/{user_id}',
