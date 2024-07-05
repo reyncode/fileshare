@@ -89,4 +89,10 @@ docker compose up -d
 alembic upgrade head
 ```
 
+## Roadmap
+- [ ] Improve the error handling differences between FilesStorageService and FilesMetadataService.
+- [ ] Refactor to leverage an openapi generation tool for changes to schemas.
+- [ ] Implement file compression on the client side before uploading to S3.
+- [ ] Implement a rollback feature in the event FilesStorage upload succeeds but FilesMetadata fails.
+
 [^1]: [The Ultimate FastAPI Tutorial Part 7 - Database Setup with SQLAlchemy and Alembic](https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-7-sqlalchemy-database-setup/)
