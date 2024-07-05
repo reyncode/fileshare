@@ -5,7 +5,7 @@ import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
 import { StrictMode } from "react"
-import { OpenAPI } from "./client"
+import { OpenAPI } from "./client/axios"
 import theme from "./theme"
 import config from "./config"
 

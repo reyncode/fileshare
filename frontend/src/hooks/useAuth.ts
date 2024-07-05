@@ -6,10 +6,10 @@ import { AxiosError } from "axios"
 import {
   type Body_login_login_access_token as AccessToken,
   type ApiError,
-  LoginService,
+  loginLoginAccessToken,
   type UserPublic,
-  UsersService,
-} from "../client"
+  usersReadUserMe
+} from "../client/axios"
 
 const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
@@ -20,12 +20,12 @@ const useAuth = () => {
   const navigate = useNavigate()
   const { data: user, isLoading } = useQuery<UserPublic | null, Error>({
     queryKey: ["currentUser"],
-    queryFn: UsersService.readUserMe,
+    queryFn: usersReadUserMe,
     enabled: isLoggedIn(),
   })
 
   const login = async (data: AccessToken) => {
-    const response = await LoginService.loginAccessToken({
+    const response = await loginLoginAccessToken({
       formData: data,
     })
     localStorage.setItem("access_token", response.access_token)

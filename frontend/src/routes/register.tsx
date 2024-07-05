@@ -22,14 +22,11 @@ import {
   useNavigate,
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { 
-  UserCreate, 
-  UsersService,
-  type ApiError,
-} from "../client"
+
 import { emailPattern } from "../utils"
 import { useState } from "react"
 import { AxiosError } from "axios"
+import { type ApiError, UserCreate, usersRegisterUser } from "../client/axios"
 
 export const Route = createFileRoute("/register" as never)({
   component: Register
@@ -65,7 +62,7 @@ function Register () {
 
   const mutation = useMutation({
     mutationFn: (data: UserCreate) =>
-      UsersService.createUser({ requestBody: data }),
+      usersRegisterUser({ requestBody: data }),
     onSuccess: () => {
       reset()
       navigate({ to: "/login" })

@@ -12,9 +12,9 @@ import {
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type UpdatePassword, UsersService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { confirmPasswordRules, passwordRules } from "../../utils"
+import { type ApiError, type UpdatePassword, usersUpdatePasswordMe } from "../../client/axios"
 
 interface UpdatePasswordForm extends UpdatePassword {
   confirm_password: string
@@ -36,7 +36,7 @@ const ChangePassword = () => {
 
   const mutation = useMutation({
     mutationFn: (data: UpdatePassword) =>
-      UsersService.updatePasswordMe({ requestBody: data }),
+      usersUpdatePasswordMe({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Password updated.", "success")
       reset()

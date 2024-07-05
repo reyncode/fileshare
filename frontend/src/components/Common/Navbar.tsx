@@ -13,13 +13,9 @@ import { FaFileAlt } from "react-icons/fa"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useFilePicker } from 'use-file-picker';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  type ApiError, 
-  type FileCreate, 
-  FilesMetadataService, 
-  FilesStorageService 
-} from "../../client"
+import { FilesStorageService } from "../../client"
 import config from "../../config"
+import { type ApiError, type FileCreate, filesCreateFile } from '../../client/axios';
 
 const Navbar = () => {
   const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
@@ -48,7 +44,7 @@ const Navbar = () => {
           size: file.size
         };
 
-        return FilesMetadataService.createFile({ requestBody: metadata });
+        return filesCreateFile({ requestBody: metadata })
       };
 
       // process each file in parallel

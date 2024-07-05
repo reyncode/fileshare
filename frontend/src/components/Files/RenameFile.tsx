@@ -14,13 +14,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import {
-  type ApiError,
-  type FilePublic,
-  type FileUpdate,
-  FilesMetadataService,
-} from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
+import { type ApiError, type FilePublic, type FileUpdate, filesUpdateFile } from "../../client/axios"
 
 interface RenameFileProps {
   file: FilePublic
@@ -44,7 +39,7 @@ const RenameFile = ({ file, isOpen, onClose }: RenameFileProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: FileUpdate) =>
-      FilesMetadataService.updateFile({ id: file.id, requestBody: data }),
+      filesUpdateFile({ fileId: file.id, requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "File updated successfully.", "success")
       onClose()

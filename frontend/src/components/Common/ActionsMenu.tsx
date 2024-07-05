@@ -13,10 +13,11 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
 import { useMutation } from "@tanstack/react-query";
-import { FilePublic, FilesStorageService } from "../../client"
+import { FilesStorageService } from "../../client"
 import RenameFile from "../Files/RenameFile"
 import Delete from "../Files/DeleteFile"
 import config from "../../config"
+import { FilePublic } from "../../client/axios"
 
 interface ActionsMenuProps {
   value: FilePublic

@@ -18,7 +18,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-import { FilesMetadataService } from "../../client"
+import { filesReadFiles } from "../../client/axios"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
 import { datetimeFormatter, formatBytes } from "../../utils"
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_layout/files" as never)({
 function FilesTableBody() {
   const { data: files } = useSuspenseQuery({
     queryKey: ["files"],
-    queryFn: () => FilesMetadataService.readFiles({}),
+    queryFn: () => filesReadFiles({}),
   })
 
   return (

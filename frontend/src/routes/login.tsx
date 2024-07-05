@@ -24,7 +24,7 @@ import {
 } from "@tanstack/react-router"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import type { Body_login_login_access_token as AccessToken } from "../client"
+import type { Body_login_login_access_token as AccessToken } from "../client/axios"
 import useAuth, { isLoggedIn } from "../hooks/useAuth"
 import { emailPattern } from "../utils"
 
@@ -115,7 +115,7 @@ function Login() {
 
           <Link
             as={RouterLink} 
-            to="/recover-password" 
+            to="/login" 
             color="blue.500"
             fontWeight="semibold"
           >

@@ -15,15 +15,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import {
-  type ApiError,
-  type UserPublic,
-  type UserUpdate,
-  UsersService,
-} from "../../client"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { emailPattern } from "../../utils"
+import { type ApiError, type UserPublic, type UserUpdate, usersUpdateUserMe } from "../../client/axios"
 
 const UserInformation = () => {
   const queryClient = useQueryClient()
@@ -51,7 +46,7 @@ const UserInformation = () => {
 
   const mutation = useMutation({
     mutationFn: (data: UserUpdate) =>
-      UsersService.updateUser({ requestBody: data }),
+      usersUpdateUserMe({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "User updated successfully.", "success")
     },

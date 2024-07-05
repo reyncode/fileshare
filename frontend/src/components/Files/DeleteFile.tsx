@@ -11,8 +11,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import config from "../../config"
 
-import { FilePublic, FilesMetadataService, FilesStorageService } from "../../client"
+import { FilesStorageService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
+import { FilePublic, filesDeleteFile } from "../../client/axios"
 
 interface DeleteFileProps {
   file: FilePublic
@@ -28,7 +29,7 @@ const Delete = ({ file, isOpen, onClose }: DeleteFileProps) => {
 
   const deleteFile = async (file: FilePublic) => {
     await FilesStorageService.deleteFile(bucketName, file.access_key);
-    await FilesMetadataService.deleteFile({ id: file.id })
+    await filesDeleteFile({ fileId: file.id })
   }
 
   const mutation = useMutation({
