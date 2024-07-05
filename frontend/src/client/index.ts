@@ -4,5 +4,4 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export * from './models'
-export * from './schemas'
 export * from './services'
