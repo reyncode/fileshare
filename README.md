@@ -29,6 +29,9 @@ The frontend service is a TypeScript application built with the React framework,
 
 The frontend communicates directly with the storage server to facilitate client-side file manipulations, such as compression. This approach conserves valuable server-side resources as the user base grows, balancing client-side performance with server-side throughput efficiency.
 
+### Generating Client Routes
+The application frontend leverages [@hey-api/openapi-ts](https://heyapi.vercel.app/) to generate a REST client to interact with the REST API in our backend. This simple integration allows us to run a script called `openapi-ts` which parses our openapi.json file (found at `[domain]/api/v1/openapi.json` in our case) at the frontend root to do the code generation in TypeScript. Now, whenever we need to make a change to our REST API routes, we can download a new copy of openapi.json and run the script instead of making changes to the frontend client code.
+
 ## Storage
 File contents are stored using [Localstack S3](https://docs.localstack.cloud/user-guide/aws/s3/), an emulator of AWS's Simple Storage Service (S3). While AWS S3 is subject to operational costs, Localstack's community edition offers a cost-effective alternative with comprehensive documentation and support. However, a notable limitation of the community edition is the lack of persistence in the S3 container, resulting in the loss of stored objects upon container restart.
 
