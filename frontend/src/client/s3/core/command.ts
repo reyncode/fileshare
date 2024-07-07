@@ -11,8 +11,6 @@ import {
   DeleteObjectCommandOutput
 } from "@aws-sdk/client-s3";
 
-import { S3Error } from "./S3Error"
-
 export const isCommandOutput = (error: any): error is PutObjectCommandOutput | GetObjectCommandOutput | DeleteObjectCommandOutput => {
   return error && typeof error === "object" && "$metadata" in error;
 }
@@ -22,9 +20,7 @@ export const putCommand = async (client: S3Client, input: PutObjectCommandInput)
     const command = new PutObjectCommand(input);
     await client.send(command);
   } catch (error) {
-    if (isCommandOutput(error)) {
-      throw new S3Error("PutObject", error, "File upload failed");
-    }
+    throw new Error(`${(error as Error).message}`)
   }
 }
 
@@ -44,11 +40,7 @@ export const getCommand = async (client: S3Client, input: GetObjectCommandInput)
 
     return await streamToBlob(response.Body);
   } catch (error) {
-    if (isCommandOutput(error)) {
-      throw new S3Error("GetObject", error, "File download failed");
-    }
-
-    return undefined;
+    throw new Error(`${(error as Error).message}`)
   }
 }
 
@@ -57,8 +49,6 @@ export const deleteCommand = async (client: S3Client, input: DeleteObjectCommand
     const command = new DeleteObjectCommand(input);
     await client.send(command);
   } catch (error) {
-    if (isCommandOutput(error)) {
-      throw new S3Error("DeleteObject", error, "File delete failed");
-    }
+    throw new Error(`${(error as Error).message}`)
   }
 }
