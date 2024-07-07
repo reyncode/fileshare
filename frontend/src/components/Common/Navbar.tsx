@@ -13,9 +13,9 @@ import { FaFileAlt } from "react-icons/fa"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useFilePicker } from 'use-file-picker';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FilesStorageService } from "../../client"
 import config from "../../config"
 import { type ApiError, type FileCreate, filesCreateFile } from '../../client/axios';
+import { storageUploadFile, storageGenerateKey } from '../../client/s3';
 
 const Navbar = () => {
   const bucketName = config.REACT_APP_FILE_BUCKET_NAME;
@@ -34,9 +34,9 @@ const Navbar = () => {
       })
 
       const handleFileUpload = async (file: File) => {
-        const key = FilesStorageService.generateKey(file.name)
+        const key = storageGenerateKey(file.name);
         
-        await FilesStorageService.uploadFile(file, bucketName, key);
+        await storageUploadFile(file, bucketName, key);
 
         const metadata: FileCreate = {
           name: file.name,

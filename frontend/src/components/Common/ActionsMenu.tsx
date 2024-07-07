@@ -13,11 +13,11 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiDownload, FiEdit, FiTrash } from "react-icons/fi"
 import { useMutation } from "@tanstack/react-query";
-import { FilesStorageService } from "../../client"
 import RenameFile from "../Files/RenameFile"
 import Delete from "../Files/DeleteFile"
 import config from "../../config"
 import { FilePublic } from "../../client/axios"
+import { storageDownloadFile, storageOpenDownloadedBlob } from '../../client/s3';
 
 interface ActionsMenuProps {
   value: FilePublic
@@ -30,7 +30,7 @@ const ActionsMenu = ({ value, disabled }: ActionsMenuProps) => {
   const deleteModal = useDisclosure()
   const toast = useToast()
   const toastIdRef = useRef<ToastId | undefined>(undefined);
-  const mutation = useMutation({
+  const mutation = useMutation<Blob | undefined, Error, FilePublic>({
     mutationFn: (file: FilePublic) => {
       toastIdRef.current = toast({
         title: `Downloading`,
@@ -41,20 +41,24 @@ const ActionsMenu = ({ value, disabled }: ActionsMenuProps) => {
         duration: null,
       })
 
-      return FilesStorageService.downloadFile(bucketName, file.access_key, file.name)
+      return storageDownloadFile(bucketName, file.access_key)
     },
-    onSuccess: () => {
-      if (toastIdRef.current) {
-        toast.update(toastIdRef.current, {
-          title: "Success",
-          description: "Downloaded successfully",
-          status: "success",
-          isClosable: true,
-          position: "bottom-right",
-          duration: 5000,
-        })
-      } else {
-        console.error('Toast ID is undefined');
+    onSuccess: (data: Blob | undefined, variables: FilePublic) => {
+      if (data) {
+        storageOpenDownloadedBlob(data, variables.name) 
+
+        if (toastIdRef.current) {
+          toast.update(toastIdRef.current, {
+            title: "Success",
+            description: "Downloaded successfully",
+            status: "success",
+            isClosable: true,
+            position: "bottom-right",
+            duration: 5000,
+          })
+        } else {
+          console.error('Toast ID is undefined');
+        }
       }
     },
     onError: (err: Error) => {
