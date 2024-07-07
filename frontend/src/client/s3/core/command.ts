@@ -2,18 +2,11 @@ import {
   S3Client,
   PutObjectCommand,
   PutObjectCommandInput,
-  PutObjectCommandOutput,
   GetObjectCommand,
   GetObjectCommandInput,
-  GetObjectCommandOutput,
   DeleteObjectCommand,
   DeleteObjectCommandInput,
-  DeleteObjectCommandOutput
 } from "@aws-sdk/client-s3";
-
-export const isCommandOutput = (error: any): error is PutObjectCommandOutput | GetObjectCommandOutput | DeleteObjectCommandOutput => {
-  return error && typeof error === "object" && "$metadata" in error;
-}
 
 export const putCommand = async (client: S3Client, input: PutObjectCommandInput): Promise<void> => {
   try {
